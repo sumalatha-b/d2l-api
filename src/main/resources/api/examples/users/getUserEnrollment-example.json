@@ -1,0 +1,30 @@
+{
+  "EnrollmentData": {
+    "OrgUnitId": 12345,
+    "UserId": 67890,
+    "RoleId": 101,
+    "IsCascading": false
+  },
+  "MyOrgUnitInfo": {
+    "OrgUnit": {
+      "Id": 12345,
+      "Name": "Biology 101",
+      "Code": "BIO101",
+      "Type": {
+        "Id": 1,
+        "Code": "Course Offering",
+        "Name": "Course Offering"
+      }
+    },
+    "Access": {
+      "IsActive": true,
+      "StartDate": "2025-09-01T00:00:00Z",
+      "EndDate": null,
+      "CanAccess": true,
+      "ClasslistRoleName": "Learner",
+      "LISRoles": ["Learner"],
+      "LastAccessed": "2025-09-12T14:30:00Z"
+    },
+    "PinDate": "2025-09-15T09:00:00Z"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "Name": "Introduction to AI",
+  "Code": "AI101",
+  "Path": "",
+  "CourseTemplateId": 1001,
+  "SemesterId": null,
+  "StartDate": "2025-09-01T00:00:00Z",
+  "EndDate": "2025-12-31T23:59:59Z",
+  "LocaleId": null,
+  "ForceLocale": false,
+  "ShowAddressBook": true,
+  "Description": {
+    "Text": "This is an introductory AI course."
+  },
+  "CanSelfRegister": true
+}

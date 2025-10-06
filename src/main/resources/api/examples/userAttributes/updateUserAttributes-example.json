@@ -1,0 +1,17 @@
+{
+  "UserId": 12345,
+  "Attributes": [
+    {
+      "AttributeId": "Department",
+      "Value": ["Computer Science", "Engineering"]
+    },
+    {
+      "AttributeId": "Role",
+      "Value": ["Instructor"]
+    },
+    {
+      "AttributeId": "Location",
+      "Value": ["New York"]
+    }
+  ]
+}

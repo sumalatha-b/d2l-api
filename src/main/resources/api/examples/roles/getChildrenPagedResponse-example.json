@@ -1,0 +1,30 @@
+{
+  "PagingInfo": {
+    "Bookmark": "abc123",
+    "HasMoreItems": true
+  },
+  "Items": [
+    {
+      "Identifier": "12345",
+      "Name": "Mathematics Department",
+      "Code": "MATH-DEPT",
+      "Type": {
+        "Id": 10,
+        "Code": "Department",
+        "Name": "Department"
+      },
+      "OrgUnitPath": "/University/Science/Mathematics"
+    },
+    {
+      "Identifier": "67890",
+      "Name": "Physics Department",
+      "Code": "PHYS-DEPT",
+      "Type": {
+        "Id": 11,
+        "Code": "Department",
+        "Name": "Department"
+      },
+      "OrgUnitPath": "/University/Science/Physics"
+    }
+  ]
+}

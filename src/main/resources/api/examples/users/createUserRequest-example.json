@@ -1,0 +1,14 @@
+{
+  "FirstName": "Alice",
+  "MiddleName": "B",
+  "LastName": "Johnson",
+  "UserName": "alice.j",
+  "ExternalEmail": "alice@example.com",
+  "OrgDefinedId": "ORG123",
+  "UniqueIdentifier": "uuid-12345",
+  "Activation": {
+    "IsActive": true,
+    "StartDate": "2025-09-15T09:00:00Z",
+    "EndDate": "2025-12-31T23:59:59Z"
+  }
+}

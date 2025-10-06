@@ -1,0 +1,32 @@
+[
+  {
+    "Identifier": "12345",
+    "ProfileIdentifier": "67890",
+    "DisplayName": "John Doe",
+    "Username": "jdoe",
+    "OrgDefinedId": "JD1001",
+    "Email": "jdoe@example.com",
+    "FirstName": "John",
+    "LastName": "Doe",
+    "RoleId": 101,
+    "LastAccessed": "2025-09-10T08:30:00Z",
+    "IsOnline": true,
+    "ClasslistRoleDisplayName": "Learner",
+    "Pronouns": "he/him"
+  },
+  {
+    "Identifier": "22345",
+    "ProfileIdentifier": "77890",
+    "DisplayName": "Jane Smith",
+    "Username": null,
+    "OrgDefinedId": null,
+    "Email": null,
+    "FirstName": "Jane",
+    "LastName": "Smith",
+    "RoleId": null,
+    "LastAccessed": null,
+    "IsOnline": false,
+    "ClasslistRoleDisplayName": "Instructor",
+    "Pronouns": ""
+  }
+]

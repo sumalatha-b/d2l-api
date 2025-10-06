@@ -1,0 +1,21 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  Identifier: 
+    type: string
+    description: Unique D2LID for the org unit
+  Name: 
+    type: string
+    description: Name of the org unit
+  Code?: 
+    type: string
+    description: Code of the org unit (nullable)
+  Path?:
+    type: string
+    description: Path of the org unit (available from LMS v20.25.1)
+  Type:
+    type: object
+    properties:
+      Id: integer
+      Name: string
+      Code: string

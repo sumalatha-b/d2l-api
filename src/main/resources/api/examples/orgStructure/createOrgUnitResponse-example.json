@@ -1,0 +1,11 @@
+{
+  "Identifier": "3001",
+  "Name": "New Custom Org Unit",
+  "Code": "CS101-ORG",
+  "Path": "/Root/Academics/CS",
+  "Type": {
+    "Id": 101,
+    "Name": "Course",
+    "Code": "CRS"
+  }
+}

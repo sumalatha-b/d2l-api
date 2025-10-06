@@ -1,0 +1,36 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  Id: 
+    type: integer
+    description: D2L identifier
+  Grades:
+    type: array
+    items:
+      type: object
+      properties:
+        GradeId: integer
+        Value: number
+        Feedback: string
+  Name: string
+  ShortName: string
+  CanExceedMax: boolean
+  ExcludeFromFinalGrade: boolean
+  StartDate: 
+    type: datetime | nil
+    description: UTC datetime or null
+  EndDate: 
+    type: datetime | nil
+    description: UTC datetime or null
+  Weight: 
+    type: number | nil
+  MaxPoints: 
+    type: number | nil
+  AutoPoints: 
+    type: boolean | nil
+  WeightDistributionType: 
+    type: integer | nil
+  NumberOfHighestToDrop: 
+    type: integer | nil
+  NumberOfLowestToDrop: 
+    type: integer | nil

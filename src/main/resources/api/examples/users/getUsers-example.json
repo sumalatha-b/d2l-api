@@ -1,0 +1,19 @@
+{
+  "OrgId": 12345,
+  "UserId": 67890,
+  "FirstName": "John",
+  "MiddleName": null,
+  "LastName": "Doe",
+  "UserName": "johndoe",
+  "ExternalEmail": "john.doe@example.com",
+  "OrgDefinedId": "JD123",
+  "UniqueIdentifier": "abc123-xyz789",
+  "Activation": {
+    "IsActive": true,
+    "StartDate": "2025-01-01T00:00:00Z",
+    "EndDate": null
+  },
+  "DisplayName": "John Doe",
+  "LastAccessedDate": "2025-09-18T06:30:00Z",
+  "Pronouns": "He/Him"
+}

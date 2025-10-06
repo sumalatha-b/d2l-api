@@ -1,0 +1,14 @@
+{
+  "OrgDefinedId": "U123",
+  "FirstName": "Auro",
+  "MiddleName": "A",
+  "LastName": "Smit",
+  "ExternalEmail": "auro.smit@nex",
+  "UserName": "aurosmit",
+  "Activation": {
+    "IsActive": true,
+    "StartDate": "2023-01-01T09:00:00.000Z",
+    "EndDate": "2023-12-31T17:00:00.000Z"
+  },
+  "Pronouns": "she/her"
+}

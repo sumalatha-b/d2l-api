@@ -1,0 +1,11 @@
+{
+  "Identifier": "1001",
+  "Name": "Science Department",
+  "Code": "SCI-DEPT",
+  "Path": "/1/1001",
+  "Type": {
+    "Id": 1,
+    "Code": "Department",
+    "Name": "Department"
+  }
+}

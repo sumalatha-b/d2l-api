@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:d2l-rest-lms="http://www.mulesoft.org/schema/mule/d2l-rest-lms" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/d2l-rest-lms http://www.mulesoft.org/schema/mule/d2l-rest-lms/current/mule-d2l-rest-lms.xsd">
+    <http:listener-config name="d2l-rest-lms-httpListenerConfig">
+        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS">
+            <tls:context>
+                <tls:key-store type="jks" path="Client-Keystore.jks" keyPassword="Mule12345" password="Mule12345" />
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+    <apikit:config name="d2l-rest-lms-config" api="d2l-rest-lms.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties doc:name="Configuration properties" doc:id="6f01696b-68e7-4205-bdc2-96c5b019dd74" file="config.yaml" />
+    <configuration doc:name="Configuration" doc:id="481a6192-85fe-4fe8-9d6c-6ddaa592a5e6" defaultErrorHandler-ref="Global-Error-Handler" />
+    <d2l-rest-lms:config name="D2l_Rest_Lms_Config" doc:name="D2l Rest Lms Config" doc:id="898fe0a3-59e4-4856-9b2a-611c55d6f503">
+        <d2l-rest-lms:unsecured-connection />
+    </d2l-rest-lms:config>
+    <flow name="d2l-rest-lms-main">
+        <http:listener config-ref="d2l-rest-lms-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="d2l-rest-lms-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="d2l-rest-lms-console">
+        <http:listener config-ref="d2l-rest-lms-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="d2l-rest-lms-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\lp\v1\attributes\users\(userId):application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:put-lp-version-attributes-users-user-id doc:name="Update User Attributes" doc:id="7f32e69f-1108-4514-a772-81ab6f0a93ab" config-ref="D2l_Rest_Lms_Config" userIdUriParam="#[vars.userId]" versionUriParam="v1" />
+    </flow>
+    <flow name="put:\lp\v1\courses\(orgUnitId):application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:put-lp-version-courses-org-unit-id doc:name="Update a current course offering" doc:id="2b02f499-ba60-4257-b43f-bb8f91f0578f" versionUriParam="v1" config-ref="D2l_Rest_Lms_Config" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="put:\lp\v1\coursetemplates\(orgUnitId):application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:put-lp-version-coursetemplates-org-unit-id doc:name="Update the information for a course template" doc:id="5b1b228e-055c-47ff-800b-c1b024a34ceb" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="put:\lp\v1\orgstructure\(orgUnitId):application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:put-lp-version-orgstructure-org-unit-id doc:name="Update a custom org unit''s properties" doc:id="1f8598aa-3aec-4f88-8f1b-27df0fdfa1f4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="put:\lp\v1\users\(userId):application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:put-lp-version-users-user-id doc:name="Update lp users by version user id" doc:id="0361122e-700b-4d30-afb9-2b336011f896" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="delete:\lp\v1\attributes\users\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-users-user-id doc:name="Delete User" doc:id="249e8b60-b754-489f-bca5-eeeaf273e491" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="delete:\lp\v1\courses\(orgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-courses-org-unit-id doc:name="Delete Course Offering" doc:id="4748202e-31a7-4946-ae82-2cb57ec62cbe" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="delete:\lp\v1\coursetemplates\(orgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-coursetemplates-org-unit-id doc:name="Delete Course Template" doc:id="dc013b99-2526-4320-a835-022d21029f06" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="delete:\lp\v1\enrollments\orgUnits\(orgUnitId)\users\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-enrollments-org-units-org-unit-id-users-user-id doc:name="Delete a userÃÂ¢Ã¢âÂ¬Ã¢âÂ¢s enrollment in the provided org unit" doc:id="ce9a6542-85f4-4426-bd47-b1f6e03a7ee4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="delete:\lp\v1\orgstructure\(orgUnitId)\children\(childOrgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="childOrgUnitId">attributes.uriParams.'childOrgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-orgstructure-org-unit-id-children-child-org-unit-id doc:name="Delete the relationship between org unit and its child" doc:id="81a46b3d-7ac4-4628-acac-73eda0155ebd" config-ref="D2l_Rest_Lms_Config" orgUnitIdUriParam="#[vars.orgUnitId]" childOrgUnitIdUriParam="#[vars.childOrgUnitId]" versionUriParam="v1" />
+    </flow>
+    <flow name="delete:\lp\v1\orgstructure\(orgUnitId)\parents\(parentOrgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="parentOrgUnitId">attributes.uriParams.'parentOrgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-orgstructure-org-unit-id-parents-parent-org-unit-id doc:name="Delete the relationship between provided org unit and its parent" doc:id="7e013945-e9f0-40fb-ad2f-bb687318d0df" config-ref="D2l_Rest_Lms_Config" orgUnitIdUriParam="#[vars.orgUnitId]" parentOrgUnitIdUriParam="#[vars.parentOrgUnitId]" versionUriParam="v1" />
+    </flow>
+    <flow name="delete:\lp\v1\users\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:delete-lp-version-users-user-id doc:name="Delete User" doc:id="9f7c519f-5787-4def-9057-bdf0f6a30add" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\le\v1\grades\courseCompletion\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-grades-course-completion-user-id doc:name="Get a users course completions" doc:id="b0ba15db-d788-4e24-b602-0dd0bed9d09e" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\le\v1\grades\values\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-grades-values-user-id doc:name="Get users grades" doc:id="59d909fa-deae-4155-9c85-c5034d1e70c4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\calendar\events\myevents:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-calendar-events-myevents doc:name="Student Activity" doc:id="b43a9211-e4d2-4c27-be25-e840e8979ed4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\classlist:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-classlist doc:name="Get classlist by orgunit" doc:id="4d375a11-d58a-4144-8331-003f4ae964d5" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\categories:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-categories doc:name="Get assignment groups" doc:id="2a8b74fa-f95c-4ec5-bb04-d65c4a05d79d" orgUnitIdUriParam="#[vars.orgUnitId]" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\courseCompletion:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-course-completion doc:name="Get course completions" doc:id="78fef1c0-652a-4ced-92d9-16b3bcd98e58" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\final\values:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-final-values doc:name="Get users final grades" doc:id="55ddd78f-80a5-474a-b761-7eab45e6c78f" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\final\values\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-final-values-user-id doc:name="Get grades by user" doc:id="9239613a-c326-4134-af83-ae95fefafa93" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="gradeObjectId">attributes.uriParams.'gradeObjectId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-grade-object-id doc:name="Get Grade Object" doc:id="fd5e3f05-ca2d-4df4-81dc-d8e996a7e164" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId)\values:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="gradeObjectId">attributes.uriParams.'gradeObjectId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-grade-object-id-values doc:name="Get users grades by grade object" doc:id="29cd98d3-2e67-4e3f-8162-a66a38083d93" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" />
+    </flow>
+    <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId)\values\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="gradeObjectId">attributes.uriParams.'gradeObjectId'</ee:set-variable>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-grade-object-id-values-user-id doc:name="Get user grade by gradeobject" doc:id="ceaf3ab0-7ead-4097-9fcd-79e9119c86b4" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\lp\v1\attributes\users\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-attributes-users-user-id doc:name="Get user attributes" doc:id="bf22b71d-e97c-494c-aef5-b8fc58ed4cad" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\lp\v1\courses\(orgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-courses-org-unit-id doc:name="Get Course Offering" doc:id="c4b882f6-3420-494b-ac67-064729076510" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\lp\v1\coursetemplates\(orgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-coursetemplates-org-unit-id doc:name="Get Course Template" doc:id="61a94a83-859d-4eb9-9cb6-dd23d99d9b67" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\lp\v1\enrollments\orgUnits\(orgUnitId)\users:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-enrollments-org-units-org-unit-id-users doc:name="Get Org Unit Enrollments" doc:id="7b411620-249c-4bd0-821f-729bd7a5fb24" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\lp\v1\enrollments\orgUnits\(orgUnitId)\users\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-enrollments-org-units-org-unit-id-users-user-id doc:name="Get User Enrollment in Org Unit" doc:id="69d55843-5ccc-41a9-8665-b261e9b47ab8" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\lp\v1\enrollments\users\(userId)\orgUnits:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-enrollments-users-user-id-org-units doc:name="Get User Org Unit Enrollments" doc:id="4f731e2a-21df-4e82-84fe-fdd8aad5168d" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\lp\v1\orgstructure\(orgUnitId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-orgstructure-org-unit-id doc:name="Get Org Unit" doc:id="3455ed0e-f2a1-426a-8d47-b3d433b625ac" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\lp\v1\orgstructure\(orgUnitId)\ancestors\paged:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-orgstructure-org-unit-id-ancestors-paged doc:name="Get Ancestor Org Units (Paged)" doc:id="bc012d72-6db9-4839-9812-da026e0a0995" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\lp\v1\orgstructure\(orgUnitId)\children\paged:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-orgstructure-org-unit-id-children-paged doc:name="Get Child Org Units (Paged)" doc:id="bd3f5029-289d-4eff-97be-0007f25ffd43" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="get:\lp\v1\roles\(roleId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="roleId">attributes.uriParams.'roleId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-roles-role-id doc:name="Get role" doc:id="d9b095cb-91bb-494e-bced-70f1d145be71" versionUriParam="v1" roleIdUriParam="#[vars.roleId]" config-ref="D2l_Rest_Lms_Config" />
+    </flow>
+    <flow name="get:\lp\v1\users:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  OrgId: 12345,
+  UserId: 67890,
+  FirstName: "John",
+  MiddleName: null,
+  LastName: "Doe",
+  UserName: "johndoe",
+  ExternalEmail: "john.doe@example.com",
+  OrgDefinedId: "JD123",
+  UniqueIdentifier: "abc123-xyz789",
+  Activation: {
+    IsActive: true,
+    StartDate: "2025-01-01T00:00:00Z",
+    EndDate: null
+  },
+  DisplayName: "John Doe",
+  LastAccessedDate: "2025-09-18T06:30:00Z",
+  Pronouns: "He/Him"
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-users doc:name="Get users" doc:id="b0dc15d5-6f5f-4b6c-8475-818d2d2cdee3" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    </flow>
+    <flow name="get:\lp\v1\users\(userId):d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-users-user-id doc:name="Get user" doc:id="47667c2c-9aa0-4d59-b365-8520a7dd741b" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+    </flow>
+    <flow name="get:\lp\v1\(orgUnitId)\roles:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:get-lp-version-org-unit-id-roles doc:name="Get role by orgunit" doc:id="9a4afd03-6558-47dc-a544-0b985d05f022" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="post:\lp\v1\courses:application\json:d2l-rest-lms-config">
+        <d2l-rest-lms:post-lp-version-courses doc:name="Create Course Offering" doc:id="1eb7abc7-4e2b-4072-b9ee-1329ee4701ab" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    </flow>
+    <flow name="post:\lp\v1\coursetemplates:application\json:d2l-rest-lms-config">
+        <d2l-rest-lms:post-lp-version-coursetemplates doc:name="Create Course Template" doc:id="aee679e8-10c8-428e-9e20-b7f6d2296b1b" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    </flow>
+    <flow name="post:\lp\v1\orgstructure\(orgUnitId)\children:application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:post-lp-version-orgstructure-org-unit-id-children doc:name="Add Child Org Unit" doc:id="3e74ce7f-f10d-4f6b-8514-09a71e96e068" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" config-ref="D2l_Rest_Lms_Config" />
+    </flow>
+    <flow name="post:\lp\v1\orgstructure\(orgUnitId)\parents:application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:post-lp-version-orgstructure-org-unit-id-parents doc:name="Add Parent Org Unit" doc:id="cdb58401-9272-49f3-907f-f204b3dfd231" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+    </flow>
+    <flow name="post:\lp\v1\orgstructure:application\json:d2l-rest-lms-config">
+        <d2l-rest-lms:post-lp-version-orgstructure doc:name="Create custom org unit" doc:id="c909a57c-0ed0-4caa-a917-9dfc7456df3c" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    </flow>
+    <flow name="post:\lp\v1\users:application\json:d2l-rest-lms-config">
+        <d2l-rest-lms:post-lp-version-users doc:name="Create User" doc:id="28450b65-bba2-4d36-8ff2-59a32566e60f" versionUriParam="v1" config-ref="D2l_Rest_Lms_Config" />
+    </flow>
+    <flow name="post:\lp\v1\enrollments\batch:application\json:d2l-rest-lms-config">
+		<d2l-rest-lms:post-lp-version-enrollments-batch doc:name="Create Batch Enrollments" doc:id="df842b93-0c34-4f6e-9b87-9f2a08937a1a" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+    </flow>
+    <flow name="post:\lp\v1\enrollments:application\json:d2l-rest-lms-config">
+		<d2l-rest-lms:post-lp-version-enrollments doc:name="Create or Update Enrollment" doc:id="b67b8952-c7ea-4fcc-853e-0f19d3ac0ac4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+    </flow>
+    <flow name="post:\lp\v1\roles:application\json:d2l-rest-lms-config">
+		<d2l-rest-lms:post-lp-version-roles doc:name="Create Role by Copying Existing Role" doc:id="1ce3f5fb-2167-435c-9cc6-9bba679ab117" versionUriParam="v1" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]" config-ref="D2l_Rest_Lms_Config"/>
+    </flow>
+    <flow name="post:\lp\v1\users\batch:application\json:d2l-rest-lms-config">
+		<d2l-rest-lms:post-lp-version-users-batch doc:name="Create Batch of Users" doc:id="64fc7499-b413-4cab-8133-3a1e7a678518" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+    </flow>
+    <flow name="post:\lp\v1\users\(userId)\password:application\json:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l-rest-lms:post-lp-version-users-user-id-password doc:name="Send User Password Reset Email" doc:id="05e86ae1-bbd8-4b4d-a9fa-85cd45504b50" config-ref="D2l_Rest_Lms_Config" userIdUriParam="#[vars.userId]" versionUriParam="v1"/>
+    </flow>
+</mule>

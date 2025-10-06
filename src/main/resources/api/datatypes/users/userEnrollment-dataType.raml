@@ -1,0 +1,36 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  EnrollmentData:
+    type: object
+    properties:
+      OrgUnitId: integer
+      UserId: integer
+      RoleId: integer
+      IsCascading: boolean
+  MyOrgUnitInfo:
+    type: object
+    properties:
+      OrgUnit:
+        type: object
+        properties:
+          Id: integer
+          Name: string
+          Code?: string | nil
+          Type:
+            type: object
+            properties:
+              Id: integer
+              Code: string
+              Name: string
+      Access:
+        type: object
+        properties:
+          IsActive: boolean
+          StartDate?: datetime | nil
+          EndDate?: datetime | nil
+          CanAccess: boolean
+          ClasslistRoleName?: string | nil
+          LISRoles?: string[]
+          LastAccessed?: datetime | nil
+      PinDate?: datetime | nil

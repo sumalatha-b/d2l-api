@@ -1,0 +1,16 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  PagingInfo:
+    type: object
+    properties:
+      Bookmark: string
+      HasMoreItems: boolean
+  Items:
+    type: array
+    items:
+      type: object
+      properties:
+        Id: integer
+        Title: string
+        Category: string

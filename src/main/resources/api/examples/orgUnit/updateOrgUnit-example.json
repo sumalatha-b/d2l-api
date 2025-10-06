@@ -1,0 +1,11 @@
+{
+  "Identifier": "12345",
+  "Name": "New Org Unit Name",
+  "Code": "ORG-NW",
+  "Path": "/001/12345",
+  "Type": {
+    "Id": 10,
+    "Code": "DEP",
+    "Name": "Department"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "Identifier": "12345",
+  "Name": "Mathematics 101",
+  "Code": "MATH101",
+  "IsActive": true,
+  "Path": "/University/Science/Mathematics/Math101",
+  "StartDate": "2025-09-01T08:00:00Z",
+  "EndDate": "2025-12-15T17:00:00Z",
+  "LocaleId": 1033,
+  "ForceLocale": false,
+  "CourseTemplate": {
+    "Identifier": "111",
+    "Name": "Math Template",
+    "Code": "MATH-TEMP",
+    "Path": "/Templates/Math"
+  },
+  "Semester": {
+    "Identifier": "222",
+    "Name": "Fall 2025",
+    "Code": "FALL25",
+    "Path": "/Semesters/Fall2025"
+  },
+  "Department": {
+    "Identifier": "333",
+    "Name": "Mathematics Department",
+    "Code": "MATH-DEPT",
+    "Path": "/Departments/Math"
+  },
+  "Description": {
+    "Text": "Introductory Math Course",
+    "Html": "<p>Introductory Math Course</p>"
+  },
+  "CanSelfRegister": true
+}

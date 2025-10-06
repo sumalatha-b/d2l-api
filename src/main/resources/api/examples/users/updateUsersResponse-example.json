@@ -1,0 +1,19 @@
+{
+  "OrgId": 98765,
+  "UserId": 12345,
+  "FirstName": "Auro",
+  "MiddleName": "A",
+  "LastName": "Smit",
+  "UserName": "Aurosmit",
+  "ExternalEmail": "Auro.smit@nex",
+  "OrgDefinedId": "U123",
+  "UniqueIdentifier": "abc123-456de-7890f",
+  "Activation": {
+    "IsActive": true,
+    "StartDate": "2023-01-01T09:00:00.000Z",
+    "EndDate": "2023-12-31T17:00:00.000Z"
+  },
+  "DisplayName": "Aurosmit",
+  "LastAccessedDate": "2023-10-20T14:23:45.123Z",
+  "Pronouns": "she/her"
+}

@@ -1,0 +1,22 @@
+{
+  "Identifier": "2001",
+  "Name": "Introduction to AI",
+  "Code": "AI101",
+  "IsActive": true,
+  "Path": "/AI101",
+  "StartDate": "2025-09-01T00:00:00Z",
+  "EndDate": "2025-12-31T23:59:59Z",
+  "LocaleId": null,
+  "ForceLocale": false,
+  "CourseTemplate": {
+    "Identifier": "1001",
+    "Name": "AI Template",
+    "Code": "AITMP"
+  },
+  "Semester": null,
+  "Department": null,
+  "Description": {
+    "Text": "This is an introductory AI course."
+  },
+  "CanSelfRegister": true
+}

@@ -1,0 +1,39 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  Identifier: string
+  Name: string
+  Code: string
+  IsActive: boolean
+  Path: string
+  StartDate?: datetime | nil
+  EndDate?: datetime | nil
+  LocaleId?: integer | nil
+  ForceLocale?: boolean
+  CourseTemplate?: 
+    type: object
+    properties:
+      Identifier: string
+      Name: string
+      Code: string
+      Path: string
+  Semester?: 
+    type: object
+    properties:
+      Identifier: string
+      Name: string
+      Code: string
+      Path: string
+  Department?: 
+    type: object
+    properties:
+      Identifier: string
+      Name: string
+      Code: string
+      Path: string
+  Description: 
+    type: object
+    properties:
+      Text: string
+      Html: string
+  CanSelfRegister: boolean

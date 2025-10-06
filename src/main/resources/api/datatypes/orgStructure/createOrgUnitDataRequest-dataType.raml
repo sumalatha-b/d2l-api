@@ -1,0 +1,16 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  Type:
+    type: integer
+    description: D2LID for the org unit’s associated org unit type
+  Name:
+    type: string
+    description: Name of the org unit
+  Code:
+    type: string
+    description: Code of the org unit (max 50 chars, restricted chars not allowed)
+  Parents:
+    type: array
+    items: integer
+    description: List of parent org unit IDs

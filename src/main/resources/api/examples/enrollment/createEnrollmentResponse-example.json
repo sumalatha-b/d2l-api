@@ -1,0 +1,8 @@
+{
+  "OrgUnitId": 101,
+  "UserId": 1001,
+  "RoleId": 5,
+  "SendEnrollmentEmail": true,
+  "EnrollmentStatus": "Enrolled",
+  "EnrollmentDate": "2025-09-22T10:00:00Z"
+}

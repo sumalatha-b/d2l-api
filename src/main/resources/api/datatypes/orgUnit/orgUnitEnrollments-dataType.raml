@@ -1,0 +1,34 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  PagingInfo:
+    type: object
+    properties:
+      Bookmark: string
+      HasMoreItems: boolean
+  Items:
+    type: array
+    items:
+      type: object
+      properties:
+        OrgUnit:
+          type: object
+          properties:
+            Id: integer
+            Name: string
+            Code?: string | nil
+            Type:
+              type: object
+              properties:
+                Id: integer
+                Code: string
+                Name: string
+        Role:
+          type: object
+          properties:
+            Id: integer
+            Code: string
+            Name: string
+        IsCascading?: boolean
+        EnrolledByUserId?: integer | nil
+        EnrolledByUserDate?: datetime | nil

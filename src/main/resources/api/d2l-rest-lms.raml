@@ -1,0 +1,888 @@
+#%RAML 1.0
+title: d2l-rest-lms
+version: v1
+baseUri:  https://devcop.brightspace.com/d2l/api
+protocols: [ HTTPS ]
+mediaType: application/json
+types:
+  getUsers: !include /datatypes/users/getUsers-dataType.raml
+  classListUser: !include /datatypes/roles/classListUser-dataType.raml
+  orgUnitEnrollments: !include /datatypes/orgUnit/orgUnitEnrollments-dataType.raml
+  userEnrollment: !include /datatypes/users/userEnrollment-dataType.raml
+  userOrgUnitsEnrollments: !include /datatypes/orgUnit/userOrgUnitsEnrollments-dataType.raml
+  orgUnitId: !include /datatypes/orgUnit/orgUnitId-dataType.raml
+  getChildrenPagedResponse: !include /datatypes/roles/getChildrenPagedResponse-dataType.raml
+  CourseOfferingResponse: !include /datatypes/courseOffering/courseOfferingResponse-dataType.raml
+  CourseTemplateResponse: !include /datatypes/courseTemplate/getCourseTemplateResponse-dataType.raml
+  GradeObjectResponse: !include /datatypes/grades/gradeObjectResponse-dataType.raml
+  createUser: !include /datatypes/users/createUser-dataType.raml
+  createUsersRequest: !include /datatypes/users/createUsersRequest-dataType.raml
+  createUsersResponse: !include /datatypes/users/createUsersResponse-dataType.raml
+  UserResetPassword: !include /datatypes/users/userResetPassword-dataType.raml
+  RoleCopyRequest: !include /datatypes/roles/createRolesRequest-dataType.raml
+  RoleCopyRsponse: !include /datatypes/roles/createRolesResponse-dataType.raml
+  createEnrollmentRequest: !include /datatypes/enrollment/createEnrollmentdataRequest-dataType.raml
+  createEnrollmentResponse: !include /datatypes/enrollment/createEnrollmentdataResponse-dataType.raml
+  batchEnrollmentRequest:  !include /datatypes/enrollment/batchEnrollmentsRequest-dataType.raml
+  batchEnrollmentResponse: !include /datatypes/enrollment/batchEnrollmentsResponse-dataType.raml
+  getRoles: !include /datatypes/roles/getRoles-dataType.raml
+  getUserAttributes: !include /datatypes/userAttributes/getUserAttributes-datatype.raml
+  getUsersFinalGrades: !include /datatypes/grades/getUsersFinalGrades-dataType.raml
+  getGradesByUser: !include /datatypes/grades/getGradesByUser-dataType.raml
+  getCourseCompletion: !include /datatypes/course/getCourseCompletion-dataType.raml
+  updateUsersRequest: !include /datatypes/users/updateUsersRequest-dataType.raml
+  updateUsersResponse: !include /datatypes/users/updateUsersResponse-dataType.raml
+  updateUserAttributes: !include /datatypes/userAttributes/updateUserAttributes-datatype.raml
+  updateOrgUnit: !include /datatypes/orgUnit/updateOrgUnit-dataType.raml
+  OrgUnitTypeInfo: !include /datatypes/orgUnit/orgUnitTypeInfo-dataType.raml
+  updateCourseOffering: !include /datatypes/courseOffering/updateCourseOffering-dataType.raml
+  updateCourseTemplate: !include /datatypes/courseTemplate/updateCourseTemplate-dataType.raml
+  deleteEnrollment: !include /datatypes/enrollment/deleteEnrollment-dataType.raml
+  commonResponse: !include /datatypes/common/common-dataType.raml
+  orgUnitCreateData: !include /datatypes/orgStructure/createOrgUnitDataRequest-dataType.raml
+  orgUnit: !include /datatypes/orgStructure/createOrgUnitResponse-dataType.raml
+  addParentOrgUnit: !include /datatypes/orgStructure/addParentOrgUnit-datatype.raml
+  addChildOrgUnit: !include /datatypes/orgStructure/addChildOrgUnit-datatype.raml
+  reqCreateCourseOffering: !include /datatypes/courseOffering/createCourseOfferingRequest-datatype.raml
+  resCreateCourseOffering: !include /datatypes/courseOffering/creatCourseOfferingResponse-datatype.raml
+  reqCreateCourseTemplate: !include /datatypes/courseTemplate/createCourseTemplateRequest-datatype.raml
+  resCourseTemplate: !include /datatypes/courseTemplate/createCourseTemplateResponse-dataType.raml
+  getStudentActivity: !include /datatypes/events/getStudentActivity-dataType.raml
+  getAssignmentGroups: !include /datatypes/assignmentGroups/getAssignnmentGroups-dataType.raml
+  userResetPasswordResponse: !include /datatypes/users/userResetPasswordResponse-dataType.raml
+
+/lp/{version}/users:
+  uriParameters:
+    version: any
+  get:
+    displayName: Get users
+    description: Get users
+    queryParameters:
+      orgDefinedId?: string
+      userName?: string
+      externalEmail?: string
+      bookmark?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsers
+            example: !include /examples/users/getUsers-example.json
+  post:
+    displayName: Create User
+    description: Create a new user entity.
+    body:
+      application/json:
+        type: createUser
+        example: !include /examples/users/createUserRequest-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: createUser
+            example: !include /examples/users/createUserResponse-example.json
+/le/{version}/{orgUnitId}/classlist:
+  uriParameters:
+    version:
+      type: any
+      required: true
+      example: 1.75
+    orgUnitId:
+      type: integer
+      required: true
+      example: 12345
+  get:
+    displayName: Get classlist by orgunit
+    description: Retrieve the enrolled users in the classlist for an org unit.
+    responses:
+      200:
+        body:
+          application/json:
+            type: classListUser[]
+            examples:
+              example1: !include /examples/roles/getClassList-example.json
+
+/lp/{version}/enrollments/orgUnits/{orgUnitId}/users:
+  uriParameters:
+    version:
+      type: any
+      required: true
+      example: 1.46
+    orgUnitId:
+      type: integer
+      required: true
+      example: 12345
+  get:
+    displayName: Get Org Unit Enrollments
+    description: Retrieve the collection of users enrolled in the identified org unit.
+    queryParameters:
+      roleId?:
+        type: integer
+        description: Filter list to a specific user role.
+        example: 101
+      isActive?:
+        type: boolean
+        description: Filter list to only active or inactive users.
+        example: true
+      bookmark?:
+        type: string
+        description: Bookmark to use for fetching next data set segment.
+        example: "abc123"
+    responses:
+      200:
+        body:
+          application/json:
+            type: orgUnitEnrollments
+            examples:
+              success: !include /examples/orgUnit/getOrgUnitEnrollments-example.json
+/lp/{version}/enrollments/orgUnits/{orgUnitId}/users/{userId}:
+  uriParameters:
+    version:
+      type: any
+      required: true
+      example: 1.46
+    orgUnitId:
+      type: integer
+      required: true
+      example: 12345
+    userId:
+      type: integer
+      required: true
+      example: 67890
+  get:
+    displayName: Get User Enrollment in Org Unit
+    description: Retrieve enrollment details for a user in the provided org unit.
+    responses:
+      200:
+        body:
+          application/json:
+            type: userEnrollment
+            examples:
+              success: !include /examples/users/getUserEnrollment-example.json
+  delete:
+    displayName: Delete a user’s enrollment in the provided org unit
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/lp/{version}/enrollments/users/{userId}/orgUnits:
+  uriParameters:
+    version:
+      type: any
+      required: true
+      example: 1.46
+    userId:
+      type: integer
+      required: true
+      example: 67890
+  get:
+    displayName: Get User Org Unit Enrollments
+    description: Retrieve a list of all enrollments for the provided user.
+    queryParameters:
+      orgUnitTypeId?:
+        type: string
+        description: CSV of D2LIDs – Filter list to specific org unit types.
+      roleId?:
+        type: integer
+        description: Filter list to a specific user role.
+      bookmark?:
+        type: string
+        description: Paging bookmark.
+    responses:
+      200:
+        body:
+          application/json:
+            type: userOrgUnitsEnrollments
+            examples:
+              success: !include /examples/orgUnit/getUserOrgUnitsEnrollments-example.json
+ 
+/lp/{version}/orgstructure/{orgUnitId}:
+  uriParameters:
+    version:
+      type: any
+      required: true
+      example: 1.46
+    orgUnitId:
+      type: integer
+      required: true
+      example: 1001
+  get:
+    displayName: Get Org Unit
+    description: Retrieve the properties for a provided org unit.
+    responses:
+      200:
+        body:
+          application/json:
+            type: orgUnitId
+            examples:
+              success: !include /examples/orgUnit/getOrgUnitId-example.json
+  put:
+    displayName: Update a custom org unit's properties
+    body:
+      application/json:
+        type: updateOrgUnit
+        example: !include /examples/orgUnit/updateOrgUnit-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: updateOrgUnit
+            example: !include /examples/orgUnit/updateOrgUnit-example.json
+
+/lp/{version}/orgstructure/{orgUnitId}/children/paged:
+  uriParameters:
+    version:
+      description: API version (D2LVERSION)
+      type: any
+      required: true
+      example: "1.46"
+    orgUnitId:
+      description: Org Unit ID (D2LID)
+      type: string
+      required: true
+      example: "12345"
+  get:
+    displayName: Get Child Org Units (Paged)
+    description: Retrieve a list of child-units for a provided org unit.
+    queryParameters:
+      ouTypeId?:
+        description: Filter retrieved list by this org unit type
+        type: string
+        example: "678"
+      bookmark?:
+        description: Bookmark to use for fetching the next data set segment
+        type: string
+        example: "abc123"
+    responses:
+      200:
+        body:
+          application/json:
+            type: getChildrenPagedResponse
+            example: !include /examples/roles/getChildrenPagedResponse-example.json
+
+/lp/{version}/courses/{orgUnitId}:
+  uriParameters:
+    version:
+      description: API version (D2LVERSION)
+      type: any
+      required: true
+      example: "1.46"
+    orgUnitId:
+      description: Org Unit ID (D2LID)
+      type: string
+      required: true
+      example: "12345"
+  get:
+    displayName: Get Course Offering
+    description: Retrieve a course offering.
+    responses:
+      200:
+        body:
+          application/json:
+            type: CourseOfferingResponse
+            example: !include /examples/courseOffering/getCourseOfferingResponse-example.json
+  put:
+    displayName: Update a current course offering
+    body:
+      application/json:
+        type: updateCourseOffering
+        example: !include /examples/courseOffering/updateCourseOffering-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: updateCourseOffering
+            example: !include /examples/courseOffering/updateCourseOffering-example.json
+  delete:
+    displayName: Delete Course Offering
+    description: Delete a course offering.
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/lp/{version}/coursetemplates/{orgUnitId}:
+  uriParameters:
+    version:
+      description: API version (D2LVERSION)
+      type: any
+      required: true
+      example: "1.46"
+    orgUnitId:
+      description: Org Unit ID (D2LID)
+      type: string
+      required: true
+      example: "98765"
+  get:
+    displayName: Get Course Template
+    description: Retrieve a course template.
+    responses:
+      200:
+        body:
+          application/json:
+            type: CourseTemplateResponse
+            example: !include /examples/courseTemplate/getCourseTemplateResponse-example.json
+  put:
+    displayName: Update the information for a course template
+    body:
+      application/json:
+        type: updateCourseTemplate
+        example: !include /examples/courseTemplate/updateCourseTemplate-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: updateCourseTemplate
+            example: !include /examples/courseTemplate/updateCourseTemplate-example.json
+  delete:
+    displayName: Delete Course Template
+    description: Delete a course template.
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/le/{version}/{orgUnitId}/grades/{gradeObjectId}:
+  uriParameters:
+    version:
+      description: API version (D2LVERSION)
+      type: any
+      required: true
+      example: "1.75"
+    orgUnitId:
+      description: Org Unit ID (D2LID)
+      type: string
+      required: true
+      example: "1234"
+    gradeObjectId:
+      description: Grade Object ID (D2LID)
+      type: string
+      required: true
+      example: "5678"
+  get:
+    displayName: Get Grade Object
+    description: Retrieve a specific grade object for a particular org unit.
+    responses:
+      200:
+        body:
+          application/json:
+            type: GradeObjectResponse
+            example: !include /examples/grades/getGradeObjectResponse-example.json
+
+
+/lp/{version}/orgstructure/{orgUnitId}/ancestors/paged:
+  uriParameters:
+    version:
+      description: API version (D2LVERSION)
+      type: any
+      required: true
+      example: "1.46"
+    orgUnitId:
+      description: Org Unit ID (D2LID)
+      type: string
+      required: true
+      example: "12345"
+  get:
+    displayName: Get Ancestor Org Units (Paged)
+    description: Retrieve a list of ancestor org units for a provided org unit.
+    queryParameters:
+      ouTypeId:
+        description: Filter retrieved list by this org unit type
+        type: string
+        required: false
+        example: "678"
+      bookmark:
+        description: Bookmark to use for fetching the next data set segment
+        type: string
+        required: false
+        example: "abc123"
+    responses:
+      200:
+        body:
+          application/json:
+            type: getChildrenPagedResponse
+            example: !include /examples/roles/getChildrenPagedResponse-example.json
+
+
+/lp/{version}/users/batch:
+  uriParameters:
+    version: any 
+  post:
+    displayName: Create Batch of Users
+    description: Create multiple new user entities (max 500)
+    body:
+      application/json:
+        type: createUsersRequest
+        example: !include /examples/users/createUsersRequest-example.json
+    responses:
+      201:
+        description: At least one user created
+        body:
+          application/json:
+            type: createUsersResponse
+            example: !include /examples/users/createUsersResponse-example.json
+
+/lp/{version}/users/{userId}/password:
+  uriParameters:
+    userId:
+      type: string
+      required: true
+      description: User ID
+    version: any
+  post:
+    displayName: Send User Password Reset Email
+    description: Send a password reset email to a particular user.
+    body:
+      application/json:
+        type: UserResetPassword
+        example: !include /examples/users/userResetPasswordRequest-example.json
+    responses:
+      200:
+        description: Password reset email sent successfully
+        body:
+          application/json:
+            type: userResetPasswordResponse
+            example: !include /examples/users/userResetPasswordResponse-example.json
+
+/lp/{version}/roles:
+  uriParameters:
+    version: any
+  post:
+    displayName: Create Role by Copying Existing Role
+    queryParameters:
+      deepCopyRoleId:
+        type: string
+        required: true
+    body:
+      application/json:
+        type: RoleCopyRequest
+        example: !include /examples/roles/createRoleRequest-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: RoleCopyRsponse
+            example: !include /examples/roles/createRoleResponse-example.json
+
+/lp/{version}/enrollments:
+  uriParameters:
+    version: any
+  post:
+    displayName: Create or Update Enrollment
+    description: Create a new enrollment or update an existing one.
+    body:
+      application/json:
+        type: createEnrollmentRequest
+        example: !include /examples/enrollment/createEnrollmentRequest-example.json
+    responses:
+      200:
+        description: Enrollment created or updated successfully
+        body:
+          application/json:
+            type: createEnrollmentResponse
+            example: !include /examples/enrollment/createEnrollmentResponse-example.json
+
+
+/lp/{version}/enrollments/batch:
+  uriParameters:
+    version: any
+  post:
+    displayName: Create Batch Enrollments
+    description: Create or update multiple enrollments (max 1000 per batch).
+    body:
+      application/json:
+        type: batchEnrollmentRequest           
+        example: !include /examples/enrollment/batchEnrollmentsRequest-example.json
+    responses:
+      201:
+        description: At least one enrollment created
+        body:
+          application/json:
+            type: array
+            items: batchEnrollmentResponse
+            example: !include /examples/enrollment/batchEnrollmentsResponse-example.json
+/lp/{version}/users/{userId}:
+  uriParameters: 
+   version: any
+   userId: string
+  get:
+    displayName: Get user
+    description: Get user
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsers
+            example: !include /examples/users/getUsers-example.json
+  put:
+    body:
+      application/json:
+        type: updateUsersRequest
+        example: !include /examples/users/updateUsersRequest-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: updateUsersResponse
+            example: !include /examples/users/updateUsersResponse-example.json
+  delete:
+    displayName: Delete User
+    description: Delete a particular user.  
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/lp/{version}/{orgUnitId}/roles:
+  uriParameters: 
+   version: any
+   orgUnitId: string
+  get:
+    displayName: Get role by orgunit
+    description: Get role by orgunit
+    responses:
+      200:
+        body:
+          application/json:
+            type: getRoles
+            example: !include /examples/roles/getRoles-example.json
+/lp/{version}/roles/{roleId}:
+  uriParameters: 
+   version: any
+   roleId: string
+  get:
+    displayName: Get role 
+    description: Get role 
+    responses:
+      200:
+        body:
+          application/json:
+            type: getRoles
+            example: !include /examples/roles/getRoles-example.json
+
+/lp/{version}/attributes/users/{userId}:
+  uriParameters: 
+   version: any
+   userId: string
+  get:
+    displayName:  Get user attributes
+    description:  Get user attributes
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUserAttributes
+            example: !include /examples/userAttributes/getUserAttributes-example.json
+  put:
+    displayName: Update User Attributes
+    body:
+      application/json:
+        type: updateUserAttributes
+        example: !include /examples/userAttributes/updateUserAttributes-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: updateUserAttributes
+            example: !include /examples/userAttributes/updateUserAttributes-example.json
+  delete:
+    displayName: Delete User Attributes
+    description: Unset all attribute values for a user.
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/le/{version}/{orgUnitId}/grades/final/values:
+  uriParameters: 
+   version: any
+   orgUnitId: string
+  get:
+    displayName: Get users final grades
+    description: Get users final grades
+    queryParameters:
+      sort?: string
+      pageSize?: integer
+      isGraded?: boolean
+      searchText?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsersFinalGrades
+            example: !include /examples/grades/getUsersFinalGrades-example.json
+
+/le/{version}/{orgUnitId}/grades/final/values/{userId}:           
+  uriParameters: 
+   version: any
+   orgUnitId: string
+   userId: string
+  get:
+    displayName: Get grades by user
+    description: Get grades by user
+    queryParameters:
+      gradeType?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getGradesByUser
+            example: !include /examples/grades/getGradesByUser-example.json
+
+/le/{version}/grades/values/{userId}:
+  uriParameters: 
+   version: any
+   userId: string
+  get:
+    displayName: Get users grades
+    description: Get users grades
+    queryParameters:
+      modifiedSince?: datetime
+      pageSize?: integer
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsersFinalGrades
+            example: !include /examples/grades/getUsersFinalGrades-example.json
+
+/le/{version}/{orgUnitId}/grades/{gradeObjectId}/values:
+  uriParameters: 
+   version: any
+   orgUnitId: string
+   gradeObjectId: string
+  get:
+    displayName: Get users grades by grade object
+    description: Get users grades by grade object
+    queryParameters:
+      sort?: string
+      pageSize?: integer
+      isGraded?: boolean
+      searchText?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsersFinalGrades
+            example: !include /examples/grades/getUsersFinalGrades-example.json
+/le/{version}/{orgUnitId}/grades/{gradeObjectId}/values/{userId}:
+  uriParameters: 
+   version: any
+   orgUnitId: string
+   gradeObjectId: string
+   userId: string
+  get:
+    displayName: Get user grade by gradeobject
+    description: Get user grade by gradeobject
+    responses:
+      200:
+        body:
+          application/json:
+            type: getGradesByUser
+            example: !include /examples/grades/getGradesByUser-example.json
+/le/{version}/grades/courseCompletion/{userId}:
+  uriParameters: 
+   version: any
+   userId: string
+  get:
+    displayName: Get a users course completions
+    description: Get a users course completions
+    queryParameters:
+      startExpiry?: datetime
+      endExpiry?: datetime
+      bookmark?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getCourseCompletion
+            example: !include /examples/course/getCourseCompletion-example.json
+
+/lp/{version}/orgstructure/{orgUnitId}/children/{childOrgUnitId}:
+  uriParameters:
+    orgUnitId:
+      type: string
+      description: D2L parent Org Unit ID
+    childOrgUnitId:
+      type: string
+      description: D2L child Org Unit ID to detach
+    version: any
+  delete:
+    displayName: Delete the relationship between org unit and its child
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/lp/{version}/orgstructure/{orgUnitId}/parents/{parentOrgUnitId}:
+  uriParameters:
+    orgUnitId:
+      type: string
+      description: D2L Org Unit ID (child)
+    parentOrgUnitId:
+      type: string
+      description: D2L Org Unit ID for the parent to detach
+    version: any
+  delete:
+    displayName: Delete the relationship between provided org unit and its parent
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+/lp/{version}/orgstructure:
+  uriParameters:
+    version: any
+  post:
+    displayName: Create custom org unit
+    description: Create a new custom org unit.
+    body:
+      application/json:
+        type: orgUnitCreateData
+        example: !include /examples/orgStructure/createOrgUnitDataRequest-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: orgUnit
+            example: !include /examples/orgStructure/createOrgUnitResponse-example.json
+/lp/{version}/orgstructure/{orgUnitId}/parents:
+  uriParameters:
+    version: any
+    orgUnitId: integer
+  post:
+    displayName: Add Parent Org Unit
+    description: >
+      Give the provided org unit a new parent org unit.  
+      Body must contain a single JSON number representing the parent OrgUnitId.
+    body:
+      application/json:
+        type: addParentOrgUnit
+        example: !include /examples/orgStructure/addParentOrgUnit-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+
+/lp/{version}/orgstructure/{orgUnitId}/children:
+  uriParameters:
+    version: any
+    orgUnitId: integer
+  post:
+    displayName: Add Child Org Unit
+    description: >
+      Give the provided org unit a new child org unit.  
+      Body must contain a single JSON number representing the child OrgUnitId.
+    body:
+      application/json:
+        type: addChildOrgUnit
+        example: !include /examples/orgStructure/addChildOrgUnit-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: commonResponse
+            example: !include /examples/common/common-example.json
+
+/lp/{version}/courses:
+  uriParameters:
+    version: any
+  post:
+    displayName: Create Course Offering
+    description: Create a new course offering.
+    body:
+      application/json:
+        type: reqCreateCourseOffering
+        example: !include /examples/courseOffering/createCourseOfferingRequest-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: resCreateCourseOffering
+            example: !include /examples/courseOffering/createCourseOfferingResponse-example.json
+/lp/{version}/coursetemplates:
+  uriParameters:
+    version:
+      type: any
+      description: API version
+  post:
+    displayName: Create Course Template
+    description: Create a new course template.
+    
+    body:
+      application/json:
+        type: reqCreateCourseTemplate
+        example: !include /examples/courseTemplate/createCourseTemplateRequest-example.json
+    responses:
+      200:
+        body:
+          application/json:
+            type: resCourseTemplate
+            example: !include /examples/courseTemplate/createCourseTemplateResponse-example.json
+/le/{version}/{orgUnitId}/calendar/events/myevents:
+  uriParameters:
+    version:
+      type: any
+      description: API version
+    orgUnitId:
+      type: string
+  get:
+    displayName: Student Activity
+    description: Student Activity
+    responses:
+      200:
+        body:
+          application/json:
+            type: getStudentActivity
+            example: !include /examples/events/getStudentActivity-example.json
+/le/{version}/{orgUnitId}/grades/categories:
+  uriParameters:
+    version:
+      type: any
+      description: API version
+    orgUnitId:
+      type: string
+  get:
+    displayName: Get assignment groups
+    description: Get assignment groups
+    responses:
+      200:
+        body:
+          application/json:
+            type: getAssignmentGroups
+            example: !include /examples/assignmentGroups/getAssignmentGroups-example.json
+/le/{version}/{orgUnitId}/grades/courseCompletion:
+  uriParameters: 
+   version: any
+   orgUnitId: string
+  get:
+    displayName: Get course completions
+    description: Get course completions
+    queryParameters:
+      userId?: string
+      startExpiry?: datetime
+      endExpiry?: datetime
+      bookmark?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getCourseCompletion
+            example: !include /examples/course/getCourseCompletion-example.json
+
+
+
+
+
+
+

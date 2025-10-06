@@ -1,0 +1,16 @@
+[
+  {
+    "StatusCode": 400,
+    "StatusMessage": "User already enrolled in the OrgUnit",
+    "OrgUnitId": 101,
+    "UserId": 1001,
+    "RoleId": 5
+  },
+  {
+    "StatusCode": 404,
+    "StatusMessage": "OrgUnit not found",
+    "OrgUnitId": 999,
+    "UserId": 1003,
+    "RoleId": 7
+  }
+]

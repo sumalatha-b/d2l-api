@@ -1,0 +1,23 @@
+{
+  "Id": 12345,
+  "Name": "Midterm Exam",
+  "ShortName": "Midterm",
+  "GradeType": "Numeric",
+  "CategoryId": 0,
+  "Description": {
+    "Content": "Midterm exam covering chapters 1-5",
+    "Type": "Text/HTML"
+  },
+  "IsHidden": false,
+  "MaxPoints": 100,
+  "CanExceedMaxPoints": false,
+  "IsBonus": false,
+  "ExcludeFromFinalGradeCalculation": false,
+  "GradeSchemeId": 6789,
+  "GradeSchemeUrl": "/d2l/api/le/1.75/12345/gradeschemes/6789",
+  "Weight": 30,
+  "AssociatedTool": {
+    "ToolId": 55,
+    "ToolItemId": 999
+  }
+}

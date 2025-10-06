@@ -1,0 +1,18 @@
+{
+  "DisplayedGrade": "85%",
+  "GradeObjectIdentifier": "12345",
+  "GradeObjectName": "Final Exam",
+  "GradeObjectType": 1,
+  "GradeObjectTypeName": "Numeric",
+  "Comments": {
+    "Text": "Great improvement from the midterm.",
+    "Html": "<p>Great improvement from the midterm.</p>"
+  },
+  "PrivateComments": {
+    "Text": "Student needed extra support in problem-solving.",
+    "Html": "<p>Student needed extra support in problem-solving.</p>"
+  },
+  "LastModified": "2025-09-19T08:45:00Z",
+  "LastModifiedBy": "67890",
+  "ReleasedDate": "2025-09-19T09:00:00Z"
+}

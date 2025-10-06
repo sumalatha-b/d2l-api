@@ -1,0 +1,16 @@
+{
+  "enrollments": [
+    {
+      "OrgUnitId": 101,
+      "UserId": 1001,
+      "RoleId": 5,
+      "SendEnrollmentEmail": true
+    },
+    {
+      "OrgUnitId": 102,
+      "UserId": 1002,
+      "RoleId": 6,
+      "SendEnrollmentEmail": false
+    }
+  ]
+}

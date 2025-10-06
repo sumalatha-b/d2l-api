@@ -1,0 +1,15 @@
+{
+  "RoleName": "NewRoleFromTemplate",
+  "Identifier": "role123",
+  "DisplayName": "NewRoleFromTemplate",
+  "Code": "NRFT",
+  "Description": "Copy of existing role",
+  "RoleAlias": "NewRoleAlias",
+  "IsCascading": true,
+  "AccessFutureCourses": false,
+  "AccessInactiveCourses": false,
+  "AccessPastCourses": true,
+  "ShowInGrades": true,
+  "ShowInUserProgress": true,
+  "InClassList": true
+}
