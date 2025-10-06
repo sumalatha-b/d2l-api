@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.6.1</app.runtime>
-		<mule.maven.plugin.version>4.1.0</mule.maven.plugin.version>
+		<mule.maven.plugin.version>4.3.0</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -29,6 +29,9 @@
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<classifier>mule-application</classifier>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -53,9 +56,9 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>163467f3-5233-4937-8210-26429788afa0</groupId>
+			<groupId>4f77fae5-8c82-4374-8d34-eb141c2786b9</groupId>
 			<artifactId>d2l-rest-lms</artifactId>
-			<version>1.0.3-BETA</version>
+			<version>1.0.4-BETA</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
