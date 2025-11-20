@@ -1,9 +1,14 @@
 #%RAML 1.0
-title: d2l-rest-lms
+title: D2L
 version: v1
 baseUri:  https://devcop.brightspace.com/d2l/api
+description: D2L LMS is a cloud-based learning management system that allows educators to create and manage courses, assignments, quizzes, and student communication in a flexible and user-friendly platform.
 protocols: [ HTTPS ]
 mediaType: application/json
+
+traits:
+  errorResponse: !include /traits/errorResponse-trait.raml
+  commonHeaders: !include /traits/commonHeaders-trait.raml
 types:
   getUsers: !include /datatypes/users/getUsers-dataType.raml
   classListUser: !include /datatypes/roles/classListUser-dataType.raml
@@ -55,7 +60,8 @@ types:
   uriParameters:
     version: any
   get:
-    displayName: Get users
+    is: [commonHeaders,errorResponse]
+    displayName: User - Get users
     description: Get users
     queryParameters:
       orgDefinedId?: string
@@ -69,7 +75,8 @@ types:
             type: getUsers
             example: !include /examples/users/getUsers-example.json
   post:
-    displayName: Create User
+    is: [commonHeaders,errorResponse]
+    displayName: User - Create User
     description: Create a new user entity.
     body:
       application/json:
@@ -88,11 +95,12 @@ types:
       required: true
       example: 1.75
     orgUnitId:
-      type: integer
+      type: string
       required: true
-      example: 12345
+      example: "12345"
   get:
-    displayName: Get classlist by orgunit
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Get classlist by orgunit
     description: Retrieve the enrolled users in the classlist for an org unit.
     responses:
       200:
@@ -109,11 +117,12 @@ types:
       required: true
       example: 1.46
     orgUnitId:
-      type: integer
+      type: string
       required: true
-      example: 12345
+      example: "12345"
   get:
-    displayName: Get Org Unit Enrollments
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Get enrollments by orgunit
     description: Retrieve the collection of users enrolled in the identified org unit.
     queryParameters:
       roleId?:
@@ -142,15 +151,16 @@ types:
       required: true
       example: 1.46
     orgUnitId:
-      type: integer
+      type: string
       required: true
-      example: 12345
+      example: "12345"
     userId:
-      type: integer
+      type: string
       required: true
-      example: 67890
+      example: "67890"
   get:
-    displayName: Get User Enrollment in Org Unit
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Get enrollment by orgunit
     description: Retrieve enrollment details for a user in the provided org unit.
     responses:
       200:
@@ -160,7 +170,8 @@ types:
             examples:
               success: !include /examples/users/getUserEnrollment-example.json
   delete:
-    displayName: Delete a user’s enrollment in the provided org unit
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Delete enrollment by orgunit
     responses:
       200:
         body:
@@ -174,11 +185,12 @@ types:
       required: true
       example: 1.46
     userId:
-      type: integer
+      type: string
       required: true
-      example: 67890
+      example: "67890"
   get:
-    displayName: Get User Org Unit Enrollments
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Get user's enrollments
     description: Retrieve a list of all enrollments for the provided user.
     queryParameters:
       orgUnitTypeId?:
@@ -205,11 +217,12 @@ types:
       required: true
       example: 1.46
     orgUnitId:
-      type: integer
+      type: string
       required: true
-      example: 1001
+      example: "1001"
   get:
-    displayName: Get Org Unit
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Get orgunit
     description: Retrieve the properties for a provided org unit.
     responses:
       200:
@@ -219,7 +232,8 @@ types:
             examples:
               success: !include /examples/orgUnit/getOrgUnitId-example.json
   put:
-    displayName: Update a custom org unit's properties
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Update orgunit
     body:
       application/json:
         type: updateOrgUnit
@@ -244,7 +258,8 @@ types:
       required: true
       example: "12345"
   get:
-    displayName: Get Child Org Units (Paged)
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Get orgunit children
     description: Retrieve a list of child-units for a provided org unit.
     queryParameters:
       ouTypeId?:
@@ -275,7 +290,8 @@ types:
       required: true
       example: "12345"
   get:
-    displayName: Get Course Offering
+    is: [commonHeaders,errorResponse]
+    displayName: Course Offering - Get course offering
     description: Retrieve a course offering.
     responses:
       200:
@@ -284,7 +300,8 @@ types:
             type: CourseOfferingResponse
             example: !include /examples/courseOffering/getCourseOfferingResponse-example.json
   put:
-    displayName: Update a current course offering
+    is: [commonHeaders,errorResponse]
+    displayName: Course Offering - Update course offering
     body:
       application/json:
         type: updateCourseOffering
@@ -296,7 +313,8 @@ types:
             type: updateCourseOffering
             example: !include /examples/courseOffering/updateCourseOffering-example.json
   delete:
-    displayName: Delete Course Offering
+    is: [commonHeaders,errorResponse]
+    displayName: Course Offering - Delete Course Offering
     description: Delete a course offering.
     responses:
       200:
@@ -317,7 +335,8 @@ types:
       required: true
       example: "98765"
   get:
-    displayName: Get Course Template
+    is: [commonHeaders,errorResponse]
+    displayName: Course Template - Get course template
     description: Retrieve a course template.
     responses:
       200:
@@ -326,7 +345,8 @@ types:
             type: CourseTemplateResponse
             example: !include /examples/courseTemplate/getCourseTemplateResponse-example.json
   put:
-    displayName: Update the information for a course template
+    is: [commonHeaders,errorResponse]
+    displayName: Course Template -Update course template
     body:
       application/json:
         type: updateCourseTemplate
@@ -338,7 +358,8 @@ types:
             type: updateCourseTemplate
             example: !include /examples/courseTemplate/updateCourseTemplate-example.json
   delete:
-    displayName: Delete Course Template
+    is: [commonHeaders,errorResponse]
+    displayName: Course Template - Delete course template
     description: Delete a course template.
     responses:
       200:
@@ -364,7 +385,8 @@ types:
       required: true
       example: "5678"
   get:
-    displayName: Get Grade Object
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get grade object
     description: Retrieve a specific grade object for a particular org unit.
     responses:
       200:
@@ -387,7 +409,8 @@ types:
       required: true
       example: "12345"
   get:
-    displayName: Get Ancestor Org Units (Paged)
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Get orgunit ancestors
     description: Retrieve a list of ancestor org units for a provided org unit.
     queryParameters:
       ouTypeId:
@@ -412,7 +435,8 @@ types:
   uriParameters:
     version: any 
   post:
-    displayName: Create Batch of Users
+    is: [commonHeaders,errorResponse]
+    displayName: User - Create users
     description: Create multiple new user entities (max 500)
     body:
       application/json:
@@ -431,10 +455,12 @@ types:
     userId:
       type: string
       required: true
+      example: "67890"
       description: User ID
     version: any
   post:
-    displayName: Send User Password Reset Email
+    is: [commonHeaders,errorResponse]
+    displayName: User - Send password reset
     description: Send a password reset email to a particular user.
     body:
       application/json:
@@ -452,7 +478,8 @@ types:
   uriParameters:
     version: any
   post:
-    displayName: Create Role by Copying Existing Role
+    is: [commonHeaders,errorResponse]
+    displayName: Roles - Create Role
     queryParameters:
       deepCopyRoleId:
         type: string
@@ -472,7 +499,8 @@ types:
   uriParameters:
     version: any
   post:
-    displayName: Create or Update Enrollment
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Create enrollment
     description: Create a new enrollment or update an existing one.
     body:
       application/json:
@@ -491,7 +519,8 @@ types:
   uriParameters:
     version: any
   post:
-    displayName: Create Batch Enrollments
+    is: [commonHeaders,errorResponse]
+    displayName: Enrollment - Create enrollments
     description: Create or update multiple enrollments (max 1000 per batch).
     body:
       application/json:
@@ -510,6 +539,7 @@ types:
    version: any
    userId: string
   get:
+    is: [commonHeaders,errorResponse]
     displayName: Get user
     description: Get user
     responses:
@@ -519,6 +549,9 @@ types:
             type: getUsers
             example: !include /examples/users/getUsers-example.json
   put:
+    is: [commonHeaders,errorResponse]
+    displayName: User - Update user
+    description: Update data for a particular user.
     body:
       application/json:
         type: updateUsersRequest
@@ -530,7 +563,8 @@ types:
             type: updateUsersResponse
             example: !include /examples/users/updateUsersResponse-example.json
   delete:
-    displayName: Delete User
+    is: [commonHeaders,errorResponse]
+    displayName: User - Delete User
     description: Delete a particular user.  
     responses:
       200:
@@ -543,7 +577,8 @@ types:
    version: any
    orgUnitId: string
   get:
-    displayName: Get role by orgunit
+    is: [commonHeaders,errorResponse]
+    displayName: Roles - Get role by orgunit
     description: Get role by orgunit
     responses:
       200:
@@ -556,7 +591,8 @@ types:
    version: any
    roleId: string
   get:
-    displayName: Get role 
+    is: [commonHeaders,errorResponse]
+    displayName: Roles - Get role 
     description: Get role 
     responses:
       200:
@@ -570,7 +606,8 @@ types:
    version: any
    userId: string
   get:
-    displayName:  Get user attributes
+    is: [commonHeaders,errorResponse]
+    displayName:  User Attributes - Get user attributes
     description:  Get user attributes
     responses:
       200:
@@ -579,7 +616,8 @@ types:
             type: getUserAttributes
             example: !include /examples/userAttributes/getUserAttributes-example.json
   put:
-    displayName: Update User Attributes
+    is: [commonHeaders,errorResponse]
+    displayName: User Attributes - Update user attributes
     body:
       application/json:
         type: updateUserAttributes
@@ -591,7 +629,8 @@ types:
             type: updateUserAttributes
             example: !include /examples/userAttributes/updateUserAttributes-example.json
   delete:
-    displayName: Delete User Attributes
+    is: [commonHeaders,errorResponse]
+    displayName: User Attributes - Delete user attributes
     description: Unset all attribute values for a user.
     responses:
       200:
@@ -604,7 +643,8 @@ types:
    version: any
    orgUnitId: string
   get:
-    displayName: Get users final grades
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get users' final grades
     description: Get users final grades
     queryParameters:
       sort?: string
@@ -624,7 +664,8 @@ types:
    orgUnitId: string
    userId: string
   get:
-    displayName: Get grades by user
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get user's final grades
     description: Get grades by user
     queryParameters:
       gradeType?: string
@@ -640,7 +681,8 @@ types:
    version: any
    userId: string
   get:
-    displayName: Get users grades
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get user's grades
     description: Get users grades
     queryParameters:
       modifiedSince?: datetime
@@ -658,7 +700,8 @@ types:
    orgUnitId: string
    gradeObjectId: string
   get:
-    displayName: Get users grades by grade object
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get users' grades by grade object
     description: Get users grades by grade object
     queryParameters:
       sort?: string
@@ -678,7 +721,8 @@ types:
    gradeObjectId: string
    userId: string
   get:
-    displayName: Get user grade by gradeobject
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get user's grade by gradeobject
     description: Get user grade by gradeobject
     responses:
       200:
@@ -691,7 +735,8 @@ types:
    version: any
    userId: string
   get:
-    displayName: Get a users course completions
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get a user's course completions
     description: Get a users course completions
     queryParameters:
       startExpiry?: datetime
@@ -714,7 +759,8 @@ types:
       description: D2L child Org Unit ID to detach
     version: any
   delete:
-    displayName: Delete the relationship between org unit and its child
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Delete orgunit child relationship
     responses:
       200:
         body:
@@ -731,7 +777,8 @@ types:
       description: D2L Org Unit ID for the parent to detach
     version: any
   delete:
-    displayName: Delete the relationship between provided org unit and its parent
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Delete orgunit parent relationship
     responses:
       200:
         body:
@@ -742,7 +789,8 @@ types:
   uriParameters:
     version: any
   post:
-    displayName: Create custom org unit
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Create orgunit
     description: Create a new custom org unit.
     body:
       application/json:
@@ -757,9 +805,10 @@ types:
 /lp/{version}/orgstructure/{orgUnitId}/parents:
   uriParameters:
     version: any
-    orgUnitId: integer
+    orgUnitId: string
   post:
-    displayName: Add Parent Org Unit
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Add orgunit parent
     description: >
       Give the provided org unit a new parent org unit.  
       Body must contain a single JSON number representing the parent OrgUnitId.
@@ -777,9 +826,10 @@ types:
 /lp/{version}/orgstructure/{orgUnitId}/children:
   uriParameters:
     version: any
-    orgUnitId: integer
+    orgUnitId: string
   post:
-    displayName: Add Child Org Unit
+    is: [commonHeaders,errorResponse]
+    displayName: Orgunit - Add orgunit child
     description: >
       Give the provided org unit a new child org unit.  
       Body must contain a single JSON number representing the child OrgUnitId.
@@ -798,7 +848,8 @@ types:
   uriParameters:
     version: any
   post:
-    displayName: Create Course Offering
+    is: [commonHeaders,errorResponse]
+    displayName: Course Offering - Create course offering
     description: Create a new course offering.
     body:
       application/json:
@@ -816,7 +867,8 @@ types:
       type: any
       description: API version
   post:
-    displayName: Create Course Template
+    is: [commonHeaders,errorResponse]
+    displayName: Course Template - Create course template
     description: Create a new course template.
     
     body:
@@ -837,7 +889,8 @@ types:
     orgUnitId:
       type: string
   get:
-    displayName: Student Activity
+    is: [commonHeaders,errorResponse]
+    displayName: Event - Student Activity
     description: Student Activity
     responses:
       200:
@@ -853,7 +906,8 @@ types:
     orgUnitId:
       type: string
   get:
-    displayName: Get assignment groups
+    is: [commonHeaders,errorResponse]
+    displayName: Assignment Groups - Get assignment groups
     description: Get assignment groups
     responses:
       200:
@@ -866,7 +920,8 @@ types:
    version: any
    orgUnitId: string
   get:
-    displayName: Get course completions
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get course completions
     description: Get course completions
     queryParameters:
       userId?: string

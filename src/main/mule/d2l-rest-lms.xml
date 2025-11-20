@@ -24,86 +24,6 @@
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="d2l-rest-lms-config" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Bad request"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Method not allowed"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not acceptable"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Unsupported media type"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not Implemented"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
     </flow>
     <flow name="d2l-rest-lms-console">
         <http:listener config-ref="d2l-rest-lms-httpListenerConfig" path="/console/*">
@@ -116,21 +36,6 @@ output application/json
             </http:error-response>
         </http:listener>
         <apikit:console config-ref="d2l-rest-lms-config" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
     </flow>
     <flow name="put:\lp\v1\attributes\users\(userId):application\json:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -269,7 +174,7 @@ output application/json
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-categories doc:name="Get assignment groups" doc:id="2a8b74fa-f95c-4ec5-bb04-d65c4a05d79d" orgUnitIdUriParam="#[vars.orgUnitId]" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+        <d2l-rest-lms:get-le-version-org-unit-id-grades-categories doc:name="Get assignment groups" doc:id="2a8b74fa-f95c-4ec5-bb04-d65c4a05d79d" orgUnitIdUriParam="#[vars.orgUnitId]" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
     </flow>
     <flow name="get:\le\v1\(orgUnitId)\grades\courseCompletion:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -479,16 +384,16 @@ output application/json
         <d2l-rest-lms:post-lp-version-users doc:name="Create User" doc:id="28450b65-bba2-4d36-8ff2-59a32566e60f" versionUriParam="v1" config-ref="D2l_Rest_Lms_Config" />
     </flow>
     <flow name="post:\lp\v1\enrollments\batch:application\json:d2l-rest-lms-config">
-		<d2l-rest-lms:post-lp-version-enrollments-batch doc:name="Create Batch Enrollments" doc:id="df842b93-0c34-4f6e-9b87-9f2a08937a1a" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+        <d2l-rest-lms:post-lp-version-enrollments-batch doc:name="Create Batch Enrollments" doc:id="df842b93-0c34-4f6e-9b87-9f2a08937a1a" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
     </flow>
     <flow name="post:\lp\v1\enrollments:application\json:d2l-rest-lms-config">
-		<d2l-rest-lms:post-lp-version-enrollments doc:name="Create or Update Enrollment" doc:id="b67b8952-c7ea-4fcc-853e-0f19d3ac0ac4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+        <d2l-rest-lms:post-lp-version-enrollments doc:name="Create or Update Enrollment" doc:id="b67b8952-c7ea-4fcc-853e-0f19d3ac0ac4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
     </flow>
     <flow name="post:\lp\v1\roles:application\json:d2l-rest-lms-config">
-		<d2l-rest-lms:post-lp-version-roles doc:name="Create Role by Copying Existing Role" doc:id="1ce3f5fb-2167-435c-9cc6-9bba679ab117" versionUriParam="v1" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]" config-ref="D2l_Rest_Lms_Config"/>
+        <d2l-rest-lms:post-lp-version-roles doc:name="Create Role by Copying Existing Role" doc:id="1ce3f5fb-2167-435c-9cc6-9bba679ab117" versionUriParam="v1" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]" config-ref="D2l_Rest_Lms_Config" />
     </flow>
     <flow name="post:\lp\v1\users\batch:application\json:d2l-rest-lms-config">
-		<d2l-rest-lms:post-lp-version-users-batch doc:name="Create Batch of Users" doc:id="64fc7499-b413-4cab-8133-3a1e7a678518" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1"/>
+        <d2l-rest-lms:post-lp-version-users-batch doc:name="Create Batch of Users" doc:id="64fc7499-b413-4cab-8133-3a1e7a678518" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
     </flow>
     <flow name="post:\lp\v1\users\(userId)\password:application\json:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -496,6 +401,6 @@ output application/json
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:post-lp-version-users-user-id-password doc:name="Send User Password Reset Email" doc:id="05e86ae1-bbd8-4b4d-a9fa-85cd45504b50" config-ref="D2l_Rest_Lms_Config" userIdUriParam="#[vars.userId]" versionUriParam="v1"/>
+        <d2l-rest-lms:post-lp-version-users-user-id-password doc:name="Send User Password Reset Email" doc:id="05e86ae1-bbd8-4b4d-a9fa-85cd45504b50" config-ref="D2l_Rest_Lms_Config" userIdUriParam="#[vars.userId]" versionUriParam="v1" />
     </flow>
 </mule>
