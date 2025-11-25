@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:d2l="http://www.mulesoft.org/schema/mule/d2l"
+	xmlns:blackboard="http://www.mulesoft.org/schema/mule/blackboard"
+	xmlns:moodle="http://www.mulesoft.org/schema/mule/moodle"
+	xmlns:moodle-access-token="http://www.mulesoft.org/schema/mule/moodle-access-token" xmlns:canvas="http://www.mulesoft.org/schema/mule/canvas"
+	xmlns:canvas-rest-lms="http://www.mulesoft.org/schema/mule/canvas-rest-lms"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/canvas-rest-lms http://www.mulesoft.org/schema/mule/canvas-rest-lms/current/mule-canvas-rest-lms.xsd
+http://www.mulesoft.org/schema/mule/canvas http://www.mulesoft.org/schema/mule/canvas/current/mule-canvas.xsd
+http://www.mulesoft.org/schema/mule/moodle-access-token http://www.mulesoft.org/schema/mule/moodle-access-token/current/mule-moodle-access-token.xsd
+http://www.mulesoft.org/schema/mule/moodle http://www.mulesoft.org/schema/mule/moodle/current/mule-moodle.xsd
+http://www.mulesoft.org/schema/mule/blackboard http://www.mulesoft.org/schema/mule/blackboard/current/mule-blackboard.xsd
+http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/current/mule-d2l.xsd">
+<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="57ac21b4-aed7-497b-b683-b4a8f0681b10" >
+		<salesforce:basic-connection username="${sf.username}" password="${sf.password}" securityToken="${sf.securityToken}"/>
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="e5dddb1f-64af-4c93-9632-f326a933a339" file="config.yaml" />
+	<configuration doc:name="Configuration" doc:id="e9e914ec-58c4-47a5-80c5-10e21d8d3ebf" defaultErrorHandler-ref="Global-Error-Handler" />
+	<http:listener-config name="d2l-rest-lms-httpListenerConfig">
+        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS">
+            <tls:context>
+                <tls:key-store type="jks" path="Client-Keystore.jks" keyPassword="Mule12345" password="Mule12345" />
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+    <apikit:config name="d2l-rest-lms-config" api="d2l-rest-lms.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<d2l:config name="D2l_Config" doc:name="D2l Config" doc:id="d746a9d2-985f-42d7-8ccc-41c3285e23c3" >
+	</d2l:config>
+</mule>

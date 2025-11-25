@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:d2l-rest-lms="http://www.mulesoft.org/schema/mule/d2l-rest-lms" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/d2l-rest-lms http://www.mulesoft.org/schema/mule/d2l-rest-lms/current/mule-d2l-rest-lms.xsd">
-    <http:listener-config name="d2l-rest-lms-httpListenerConfig">
-        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS">
-            <tls:context>
-                <tls:key-store type="jks" path="Client-Keystore.jks" keyPassword="Mule12345" password="Mule12345" />
-            </tls:context>
-        </http:listener-connection>
-    </http:listener-config>
-    <apikit:config name="d2l-rest-lms-config" api="d2l-rest-lms.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <configuration-properties doc:name="Configuration properties" doc:id="6f01696b-68e7-4205-bdc2-96c5b019dd74" file="config.yaml" />
-    <configuration doc:name="Configuration" doc:id="481a6192-85fe-4fe8-9d6c-6ddaa592a5e6" defaultErrorHandler-ref="Global-Error-Handler" />
-    <d2l-rest-lms:config name="D2l_Rest_Lms_Config" doc:name="D2l Rest Lms Config" doc:id="898fe0a3-59e4-4856-9b2a-611c55d6f503">
-        <d2l-rest-lms:unsecured-connection />
-    </d2l-rest-lms:config>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:d2l="http://www.mulesoft.org/schema/mule/d2l" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/current/mule-d2l.xsd">
     <flow name="d2l-rest-lms-main">
         <http:listener config-ref="d2l-rest-lms-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -38,188 +25,395 @@
         <apikit:console config-ref="d2l-rest-lms-config" />
     </flow>
     <flow name="put:\lp\v1\attributes\users\(userId):application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="e1378431-c69d-4ee1-a734-922d9313d060" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/attributes/users/{userId}" allowedMethods="PUT">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:put-lp-version-attributes-users-user-id doc:name="Update User Attributes" doc:id="7f32e69f-1108-4514-a772-81ab6f0a93ab" config-ref="D2l_Rest_Lms_Config" userIdUriParam="#[vars.userId]" versionUriParam="v1" />
+        <d2l:put-lp-version-attributes-users-user-id doc:name="User Attributes - Update user attributes" doc:id="9f83aeb3-ad1c-4807-a664-7750c03e70a7" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" config-ref="D2l_Config" />
     </flow>
     <flow name="put:\lp\v1\courses\(orgUnitId):application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="0254c888-0ce1-44c4-9673-de1f03240b73" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/courses/{orgUnitId}" allowedMethods="PUT">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:put-lp-version-courses-org-unit-id doc:name="Update a current course offering" doc:id="2b02f499-ba60-4257-b43f-bb8f91f0578f" versionUriParam="v1" config-ref="D2l_Rest_Lms_Config" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:put-lp-version-courses-org-unit-id doc:name="Course Offering - Update course offering" doc:id="8757edbd-12da-44ed-a3f3-935b43ee811d" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="put:\lp\v1\coursetemplates\(orgUnitId):application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="aad0bd54-734f-4454-9dfd-58eac330e96c" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/coursetemplates/{orgUnitId}" allowedMethods="PUT">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:put-lp-version-coursetemplates-org-unit-id doc:name="Update the information for a course template" doc:id="5b1b228e-055c-47ff-800b-c1b024a34ceb" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:put-lp-version-coursetemplates-org-unit-id doc:name="Course Template -Update course template" doc:id="33be8192-8aef-438c-ae14-f1fc26b31606" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="put:\lp\v1\orgstructure\(orgUnitId):application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="fb2b2236-299e-4120-9e12-b3de8eacda18" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}" allowedMethods="PUT">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:put-lp-version-orgstructure-org-unit-id doc:name="Update a custom org unit''s properties" doc:id="1f8598aa-3aec-4f88-8f1b-27df0fdfa1f4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:put-lp-version-orgstructure-org-unit-id doc:name="Orgunit - Update orgunit" doc:id="a7df66a5-4ff1-42a0-9c93-ed99ef1b9218" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="put:\lp\v1\users\(userId):application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="87db43be-41f9-4e17-97cd-42a5aef89404" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/{userId}" allowedMethods="PUT">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:put-lp-version-users-user-id doc:name="Update lp users by version user id" doc:id="0361122e-700b-4d30-afb9-2b336011f896" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:put-lp-version-users-user-id doc:name="User - Update user" doc:id="b89f4080-20ea-4b6f-b3c0-e9be4e7bdf01" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\attributes\users\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="40cf3e66-8751-4d5c-bf5f-e27c1d13aefb" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/attributes/users/{userId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-users-user-id doc:name="Delete User" doc:id="249e8b60-b754-489f-bca5-eeeaf273e491" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:delete-lp-version-attributes-users-user-id doc:name="User Attributes - Delete user attributes" doc:id="92b889a0-7762-466b-a91f-7fd2bb574603" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\courses\(orgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="372d5c90-02a3-4691-b821-71f42f7dd419" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/courses/{orgUnitId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-courses-org-unit-id doc:name="Delete Course Offering" doc:id="4748202e-31a7-4946-ae82-2cb57ec62cbe" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:delete-lp-version-courses-org-unit-id doc:name="Course Offering - Delete Course Offering" doc:id="5a310e73-a2e2-47d9-bdd1-26773690fa65" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\coursetemplates\(orgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="0ebd15a5-f2f3-4d98-a254-20d4e5e88962" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/coursetemplates/{orgUnitId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-coursetemplates-org-unit-id doc:name="Delete Course Template" doc:id="dc013b99-2526-4320-a835-022d21029f06" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:delete-lp-version-coursetemplates-org-unit-id doc:name="Course Template - Delete course template" doc:id="e6ca50c4-61e9-4ec2-9de3-adb5aa93a928" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\enrollments\orgUnits\(orgUnitId)\users\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="e04fc1ca-8fe6-4b05-923c-a7b0ff62e2ed" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/enrollments/orgUnits/{orgUnitId}/users/{userId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-enrollments-org-units-org-unit-id-users-user-id doc:name="Delete a userÃÂ¢Ã¢âÂ¬Ã¢âÂ¢s enrollment in the provided org unit" doc:id="ce9a6542-85f4-4426-bd47-b1f6e03a7ee4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" />
+        <d2l:delete-lp-version-enrollments-org-units-org-unit-id-users-user-id doc:name="Enrollment - Delete enrollment by orgunit" doc:id="ecde60b3-7eca-4acd-ac16-4b244c5c6b61" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\orgstructure\(orgUnitId)\children\(childOrgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="c8d15f99-3c7d-40a9-9864-638aebe0b384" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}/children/{childOrgUnitId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="childOrgUnitId">attributes.uriParams.'childOrgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-orgstructure-org-unit-id-children-child-org-unit-id doc:name="Delete the relationship between org unit and its child" doc:id="81a46b3d-7ac4-4628-acac-73eda0155ebd" config-ref="D2l_Rest_Lms_Config" orgUnitIdUriParam="#[vars.orgUnitId]" childOrgUnitIdUriParam="#[vars.childOrgUnitId]" versionUriParam="v1" />
+        <d2l:delete-lp-version-orgstructure-org-unit-id-children-child-org-unit-id doc:name="Orgunit - Delete orgunit child relationship" doc:id="02f50328-556a-4a8d-af50-1c7e48d3f681" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" childOrgUnitIdUriParam="#[vars.childOrgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\orgstructure\(orgUnitId)\parents\(parentOrgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="4f22e2f5-5a65-4591-ab8a-9f37ed8959e2" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}/parents/{parentOrgUnitId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="parentOrgUnitId">attributes.uriParams.'parentOrgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-orgstructure-org-unit-id-parents-parent-org-unit-id doc:name="Delete the relationship between provided org unit and its parent" doc:id="7e013945-e9f0-40fb-ad2f-bb687318d0df" config-ref="D2l_Rest_Lms_Config" orgUnitIdUriParam="#[vars.orgUnitId]" parentOrgUnitIdUriParam="#[vars.parentOrgUnitId]" versionUriParam="v1" />
+        <d2l:delete-lp-version-orgstructure-org-unit-id-parents-parent-org-unit-id doc:name="Orgunit - Delete orgunit parent relationship" doc:id="f30e0eab-9f98-4208-b63d-6bbb6acdba0c" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" parentOrgUnitIdUriParam="#[vars.parentOrgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="delete:\lp\v1\users\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="81eba089-f9aa-416c-82ef-aedbdc6fa1ed" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/{userId}" allowedMethods="DELETE">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:delete-lp-version-users-user-id doc:name="Delete User" doc:id="9f7c519f-5787-4def-9057-bdf0f6a30add" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:delete-lp-version-users-user-id doc:name="User - Delete User" doc:id="7e6636a6-f6c9-4a7d-8ccb-724fd04db9da" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\le\v1\grades\courseCompletion\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="cb6bb622-2bb6-402d-a5f0-74c7738e3552" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/grades/courseCompletion/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-grades-course-completion-user-id doc:name="Get a users course completions" doc:id="b0ba15db-d788-4e24-b602-0dd0bed9d09e" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:get-le-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="5a36c68e-cf37-4661-8266-25a8edd38fb2" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\le\v1\grades\values\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="f62d175e-09f9-4bc7-8778-612186bbca0a" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/grades/values/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-grades-values-user-id doc:name="Get users grades" doc:id="59d909fa-deae-4155-9c85-c5034d1e70c4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:get-le-version-grades-values-user-id doc:name="Grades - Get user''s grades" doc:id="a4d2c59e-75a6-45cc-b3c3-a8fd8b27a121" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\le\v1\(orgUnitId)\calendar\events\myevents:d2l-rest-lms-config">
+    <flow name="get:\le\v1\(orgUnitId)\calendar\events\myevents\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="20727b96-62e9-4f1a-9033-cf4c3554b3b3" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/calendar/events/myevents/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-calendar-events-myevents doc:name="Student Activity" doc:id="b43a9211-e4d2-4c27-be25-e840e8979ed4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-le-version-org-unit-id-calendar-events-myevents doc:name="Event - Student Activity" doc:id="052708e0-313e-4b83-a2bd-825f11099700" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\le\v1\(orgUnitId)\classlist:d2l-rest-lms-config">
+    <flow name="get:\le\v1\(orgUnitId)\classlist\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="f38a353d-6040-4539-a4a0-35329e9126f7" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/classlist/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-classlist doc:name="Get classlist by orgunit" doc:id="4d375a11-d58a-4144-8331-003f4ae964d5" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-le-version-org-unit-id-classlist doc:name="Enrollment - Get classlist by orgunit" doc:id="4b52b75d-6542-40b9-8311-2c533bf0806b" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\le\v1\(orgUnitId)\grades\categories:d2l-rest-lms-config">
+    <flow name="get:\le\v1\(orgUnitId)\grades\categories\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="ce2041ef-53be-456f-a38a-be3d0a9bcb95" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/categories/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-categories doc:name="Get assignment groups" doc:id="2a8b74fa-f95c-4ec5-bb04-d65c4a05d79d" orgUnitIdUriParam="#[vars.orgUnitId]" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+        <d2l:get-le-version-org-unit-id-grades-categories doc:name="Assignment Groups - Get assignment groups" doc:id="e233654a-6a87-452c-8f8d-902425030f65" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\le\v1\(orgUnitId)\grades\courseCompletion:d2l-rest-lms-config">
+    <flow name="get:\le\v1\(orgUnitId)\grades\courseCompletion\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="a4fc779f-7e0d-43c9-9348-1233b1edf300" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/courseCompletion/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-course-completion doc:name="Get course completions" doc:id="78fef1c0-652a-4ced-92d9-16b3bcd98e58" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-le-version-org-unit-id-grades-course-completion doc:name="Grades - Get course completions" doc:id="2ccfc226-97e6-4bb1-95ed-8e20db7c0385" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\le\v1\(orgUnitId)\grades\final\values:d2l-rest-lms-config">
+    <flow name="get:\le\v1\(orgUnitId)\grades\final\values\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="acedcc5b-4fea-4475-b11b-c1029d24be63" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/final/values/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-final-values doc:name="Get users final grades" doc:id="55ddd78f-80a5-474a-b761-7eab45e6c78f" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-le-version-org-unit-id-grades-final-values doc:name="Grades - Get users'' final grades" doc:id="93727a09-8910-44b3-b6ff-eb38edb2dbf5" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\le\v1\(orgUnitId)\grades\final\values\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="fc88a909-6404-4bca-b52b-bd88ae0b6a3b" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/final/values/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-final-values-user-id doc:name="Get grades by user" doc:id="9239613a-c326-4134-af83-ae95fefafa93" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" />
+        <d2l:get-le-version-org-unit-id-grades-final-values-user-id doc:name="Grades - Get user''s final grades" doc:id="ba2a3b6d-8ff3-4313-8ec5-b36e6c098749" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="00ebda0b-3717-4dd5-8951-cc4814c28d01" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/{gradeObjectId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="gradeObjectId">attributes.uriParams.'gradeObjectId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-grade-object-id doc:name="Get Grade Object" doc:id="fd5e3f05-ca2d-4df4-81dc-d8e996a7e164" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" />
+        <d2l:get-le-version-org-unit-id-grades-grade-object-id doc:name="Grades - Get grade object" doc:id="2733fbf1-f6d9-417d-9c50-56c5151ae275" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId)\values:d2l-rest-lms-config">
+    <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId)\values\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="3f7f0a60-5a83-495a-beec-8457da4e8bdb" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/{gradeObjectId}/values/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="gradeObjectId">attributes.uriParams.'gradeObjectId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-grade-object-id-values doc:name="Get users grades by grade object" doc:id="29cd98d3-2e67-4e3f-8162-a66a38083d93" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" />
+        <d2l:get-le-version-org-unit-id-grades-grade-object-id-values doc:name="Grades - Get users'' grades by grade object" doc:id="84aa7876-a871-481a-af28-bb0c67c860bb" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\le\v1\(orgUnitId)\grades\(gradeObjectId)\values\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="2807ada4-5ee6-4e04-b6a1-6ee80939061a" config-ref="d2l-rest-lms-httpListenerConfig" path="/le/{version}/{orgUnitId}/grades/{gradeObjectId}/values/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
@@ -227,90 +421,189 @@
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-le-version-org-unit-id-grades-grade-object-id-values-user-id doc:name="Get user grade by gradeobject" doc:id="ceaf3ab0-7ead-4097-9fcd-79e9119c86b4" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" userIdUriParam="#[vars.userId]" />
+        <d2l:get-le-version-org-unit-id-grades-grade-object-id-values-user-id doc:name="Grades - Get user''s grade by gradeobject" doc:id="9b2d0802-fead-4c6a-80af-1144c92a6829" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\attributes\users\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="b3a08071-7ff1-4b8e-815d-dacb17c3309f" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/attributes/users/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-attributes-users-user-id doc:name="Get user attributes" doc:id="bf22b71d-e97c-494c-aef5-b8fc58ed4cad" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:get-lp-version-attributes-users-user-id doc:name="User Attributes - Get user attributes" doc:id="c73efd73-1df8-40d4-bebf-5de7a00db6ce" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\courses\(orgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="f1308119-8eaf-45c2-93cf-d70c41df687f" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/courses/{orgUnitId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-courses-org-unit-id doc:name="Get Course Offering" doc:id="c4b882f6-3420-494b-ac67-064729076510" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-courses-org-unit-id doc:name="Course Offering - Get course offering" doc:id="a02144bb-7685-44a0-a8cf-356e858b520c" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\coursetemplates\(orgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="0f38bc6a-4b49-4a0c-84ca-e79c54bdf8c4" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/coursetemplates/{orgUnitId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-coursetemplates-org-unit-id doc:name="Get Course Template" doc:id="61a94a83-859d-4eb9-9cb6-dd23d99d9b67" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-coursetemplates-org-unit-id doc:name="Course Template - Get course template" doc:id="af96462f-2be3-4a79-b9e1-af28f36f990d" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\lp\v1\enrollments\orgUnits\(orgUnitId)\users:d2l-rest-lms-config">
+    <flow name="get:\lp\v1\enrollments\orgUnits\(orgUnitId)\users\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="7e926ff3-350d-4991-bf31-996f006d92cd" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/enrollments/orgUnits/(orgUnitId)/users/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-enrollments-org-units-org-unit-id-users doc:name="Get Org Unit Enrollments" doc:id="7b411620-249c-4bd0-821f-729bd7a5fb24" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-enrollments-org-units-org-unit-id-users doc:name="Enrollment - Get enrollments by orgunit" doc:id="712de6e1-3a81-4f31-88c1-5432a23c6cc3" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\enrollments\orgUnits\(orgUnitId)\users\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="0c6dd515-f13b-4c7d-8262-10f0a6d25224" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/enrollments/orgUnits/(orgUnitId)/users/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-enrollments-org-units-org-unit-id-users-user-id doc:name="Get User Enrollment in Org Unit" doc:id="69d55843-5ccc-41a9-8665-b261e9b47ab8" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" />
+        <d2l:get-lp-version-enrollments-org-units-org-unit-id-users-user-id doc:name="Enrollment - Get enrollment by orgunit" doc:id="cc3ac2a0-6bf4-4b1c-836b-85a5cb5af591" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\lp\v1\enrollments\users\(userId)\orgUnits:d2l-rest-lms-config">
+    <flow name="get:\lp\v1\enrollments\users\(userId)\orgUnits\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="7c0c9f6f-6dab-4162-8a91-8f534a09c7f2" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/enrollments/users/{userId}/orgUnits/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-enrollments-users-user-id-org-units doc:name="Get User Org Unit Enrollments" doc:id="4f731e2a-21df-4e82-84fe-fdd8aad5168d" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:get-lp-version-enrollments-users-user-id-org-units doc:name="Enrollment - Get user''s enrollments" doc:id="4dd07586-7137-4281-ae65-319c14f0992e" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\orgstructure\(orgUnitId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="a423a26e-0fcb-4db6-a85b-74ca12965a5e" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-orgstructure-org-unit-id doc:name="Get Org Unit" doc:id="3455ed0e-f2a1-426a-8d47-b3d433b625ac" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-orgstructure-org-unit-id doc:name="Orgunit - Get orgunit" doc:id="4f84ae20-e05a-4031-9c02-838b7bc6dff5" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\lp\v1\orgstructure\(orgUnitId)\ancestors\paged:d2l-rest-lms-config">
+    <flow name="get:\lp\v1\orgstructure\(orgUnitId)\ancestors\paged\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="c9781014-8952-4929-8cc3-25802f50f89a" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}/ancestors/paged/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-orgstructure-org-unit-id-ancestors-paged doc:name="Get Ancestor Org Units (Paged)" doc:id="bc012d72-6db9-4839-9812-da026e0a0995" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-orgstructure-org-unit-id-ancestors-paged doc:name="Orgunit - Get orgunit ancestors" doc:id="5f4d92f0-736e-426c-b5eb-3e20bab06d48" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\lp\v1\orgstructure\(orgUnitId)\children\paged:d2l-rest-lms-config">
+    <flow name="get:\lp\v1\orgstructure\(orgUnitId)\children\paged\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="ca4bc49f-6e6a-40b0-bf00-4600427c6ab9" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}/children/paged/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-orgstructure-org-unit-id-children-paged doc:name="Get Child Org Units (Paged)" doc:id="bd3f5029-289d-4eff-97be-0007f25ffd43" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-orgstructure-org-unit-id-children-paged doc:name="Orgunit - Get orgunit children" doc:id="1454dc67-fafb-463f-b036-1f97a2a7e9b9" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\roles\(roleId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="12a9aca3-fdf2-434d-9059-84c1f00c1538" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/roles/{roleId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="roleId">attributes.uriParams.'roleId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-roles-role-id doc:name="Get role" doc:id="d9b095cb-91bb-494e-bced-70f1d145be71" versionUriParam="v1" roleIdUriParam="#[vars.roleId]" config-ref="D2l_Rest_Lms_Config" />
+        <d2l:get-lp-version-roles-role-id doc:name="Roles - Get role" doc:id="03d983ac-aab5-45cd-b9ad-4552854abe93" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" roleIdUriParam="#[vars.roleId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\lp\v1\users:d2l-rest-lms-config">
+    <flow name="get:\lp\v1\users\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="ff36fcef-1283-4fc6-ba3b-28c2ca70d39f" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -337,70 +630,187 @@ output application/json
 } as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-users doc:name="Get users" doc:id="b0dc15d5-6f5f-4b6c-8475-818d2d2cdee3" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+        <d2l:get-lp-version-users doc:name="User - Get users" doc:id="ec3db918-f19b-48c5-a1c8-90b25ef49df9" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\lp\v1\users\(userId):d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="46276e38-dd12-4cf5-82d1-c782a56cf8e8" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/{userId}" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-users-user-id doc:name="Get user" doc:id="47667c2c-9aa0-4d59-b365-8520a7dd741b" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" userIdUriParam="#[vars.userId]" />
+        <d2l:get-lp-version-users-user-id doc:name="User - Get user" doc:id="4583ab2d-1e26-4617-ab06-4b197e45d5df" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\lp\v1\(orgUnitId)\roles:d2l-rest-lms-config">
+    <flow name="get:\lp\v1\(orgUnitId)\roles\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="f8d76c45-75db-4e08-90b8-127fc8323f62" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/{orgUnitId}/roles/" allowedMethods="GET">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:get-lp-version-org-unit-id-roles doc:name="Get role by orgunit" doc:id="9a4afd03-6558-47dc-a544-0b985d05f022" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:get-lp-version-org-unit-id-roles doc:name="Roles - Get role by orgunit" doc:id="b376e585-ef25-43a0-86c5-563723058c63" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\courses:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-courses doc:name="Create Course Offering" doc:id="1eb7abc7-4e2b-4072-b9ee-1329ee4701ab" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    <flow name="post:\lp\v1\courses\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="8a12136d-79cb-4c84-8945-257db8428875" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/courses/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-courses doc:name="Course Offering - Create course offering" doc:id="f7b5d1d0-e0f8-44b6-85a1-b0d8abba3f81" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\coursetemplates:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-coursetemplates doc:name="Create Course Template" doc:id="aee679e8-10c8-428e-9e20-b7f6d2296b1b" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    <flow name="post:\lp\v1\coursetemplates\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="42b04f65-c70c-4f12-a47a-8a42a5d0c71e" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/coursetemplates/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-coursetemplates doc:name="Course Template - Create course template" doc:id="5c58b46d-dfe4-496d-8b8e-996a49e3d9f6" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\orgstructure\(orgUnitId)\children:application\json:d2l-rest-lms-config">
+    <flow name="post:\lp\v1\enrollments\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="f850abab-e4e7-4563-8751-d9f756a82ca9" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/enrollments/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-enrollments doc:name="Enrollment - Create enrollment" doc:id="0e6e19be-01d2-42a1-91db-ab873e86061c" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="post:\lp\v1\enrollments\batch\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="26b5e968-dc72-4e91-98e2-53482c81264f" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/enrollments/batch/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-enrollments-batch doc:name="Enrollment - Create enrollments" doc:id="0db13680-8139-414c-9b20-4454059f5393" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="post:\lp\v1\orgstructure\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="7306f392-de37-4a5d-827a-54c7d1071b2a" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-orgstructure doc:name="Orgunit - Create orgunit" doc:id="3f1ab246-3ad7-4a10-913b-d8707d07b421" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="post:\lp\v1\orgstructure\(orgUnitId)\children\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="18abcb9d-3a58-46d0-8f3f-dbef5a1eac74" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}/children/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:post-lp-version-orgstructure-org-unit-id-children doc:name="Add Child Org Unit" doc:id="3e74ce7f-f10d-4f6b-8514-09a71e96e068" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" config-ref="D2l_Rest_Lms_Config" />
+        <d2l:post-lp-version-orgstructure-org-unit-id-children doc:name="Orgunit - Add orgunit child" doc:id="e501f3d3-9d81-4c64-a487-91c7aa319806" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\orgstructure\(orgUnitId)\parents:application\json:d2l-rest-lms-config">
+    <flow name="post:\lp\v1\orgstructure\(orgUnitId)\parents\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="0345b917-56d3-4dec-b644-6ffa6f4c5764" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/orgstructure/{orgUnitId}/parents/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:post-lp-version-orgstructure-org-unit-id-parents doc:name="Add Parent Org Unit" doc:id="cdb58401-9272-49f3-907f-f204b3dfd231" versionUriParam="v1" orgUnitIdUriParam="#[vars.orgUnitId]" />
+        <d2l:post-lp-version-orgstructure-org-unit-id-parents doc:name="Orgunit - Add orgunit parent" doc:id="fc987df8-612a-458e-acff-89f57ebc7fa0" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\orgstructure:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-orgstructure doc:name="Create custom org unit" doc:id="c909a57c-0ed0-4caa-a917-9dfc7456df3c" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    <flow name="post:\lp\v1\roles\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="b8323d17-0d19-4de3-b02f-b4fbf55658d0" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/roles/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-roles doc:name="Roles - Create Role" doc:id="32267f3d-ce6c-453a-8818-ee94a05edd19" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\users:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-users doc:name="Create User" doc:id="28450b65-bba2-4d36-8ff2-59a32566e60f" versionUriParam="v1" config-ref="D2l_Rest_Lms_Config" />
+    <flow name="post:\lp\v1\users\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="e879146d-13a7-4bb2-8273-b89f4f76a8f7" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-users doc:name="User - Create User" doc:id="40d20a23-ad1b-4cea-802e-a6e6ecce7a7c" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="post:\lp\v1\enrollments\batch:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-enrollments-batch doc:name="Create Batch Enrollments" doc:id="df842b93-0c34-4f6e-9b87-9f2a08937a1a" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
-    </flow>
-    <flow name="post:\lp\v1\enrollments:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-enrollments doc:name="Create or Update Enrollment" doc:id="b67b8952-c7ea-4fcc-853e-0f19d3ac0ac4" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
-    </flow>
-    <flow name="post:\lp\v1\roles:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-roles doc:name="Create Role by Copying Existing Role" doc:id="1ce3f5fb-2167-435c-9cc6-9bba679ab117" versionUriParam="v1" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]" config-ref="D2l_Rest_Lms_Config" />
-    </flow>
-    <flow name="post:\lp\v1\users\batch:application\json:d2l-rest-lms-config">
-        <d2l-rest-lms:post-lp-version-users-batch doc:name="Create Batch of Users" doc:id="64fc7499-b413-4cab-8133-3a1e7a678518" config-ref="D2l_Rest_Lms_Config" versionUriParam="v1" />
+    <flow name="post:\lp\v1\users\batch\:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="b98e45e3-08ec-49ac-8f49-5112f01dd775" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/batch/" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <d2l:post-lp-version-users-batch doc:name="User - Create users" doc:id="7d92fa1e-db7a-4843-971c-7235878a7fda" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="post:\lp\v1\users\(userId)\password:application\json:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="7653d97c-6f16-4259-ad58-5a5a1dcc727c" config-ref="d2l-rest-lms-httpListenerConfig" path="/lp/{version}/users/{userId}/password" allowedMethods="POST">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+payload default error.description]]]></http:body>
+            </http:error-response>
+        </http:listener>
         <ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l-rest-lms:post-lp-version-users-user-id-password doc:name="Send User Password Reset Email" doc:id="05e86ae1-bbd8-4b4d-a9fa-85cd45504b50" config-ref="D2l_Rest_Lms_Config" userIdUriParam="#[vars.userId]" versionUriParam="v1" />
+        <d2l:post-lp-version-users-user-id-password doc:name="User - Send password reset" doc:id="1ee2b6a2-2e6d-4307-9c20-16f0aa592d26" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
 </mule>
