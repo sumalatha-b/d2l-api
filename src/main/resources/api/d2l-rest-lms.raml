@@ -6,6 +6,28 @@ description: D2L LMS is a cloud-based learning management system that allows edu
 protocols: [ HTTPS ]
 mediaType: application/json
 
+securitySchemes:
+  oauth_2_0:
+    description: |
+      This API uses OAuth 2.0 for authorization. See Brightspace developer docs for details.
+    type: OAuth 2.0
+    describedBy:
+      headers:
+        Authorization?:
+          description: |
+            Used to send the access token obtained from the OAuth 2.0 process.
+          type: string
+      responses:
+        401:
+          description: |
+            Unauthorized. A valid access token is required.
+    settings:
+      authorizationUri: https://auth.brightspace.com/oauth2/auth
+      accessTokenUri: https://auth.brightspace.com/core/connect/token
+      scopes: [ core:*:* role:detail:read ]
+      authorizationGrants: [ authorization_code ]
+securedBy:
+  - oauth_2_0
 traits:
   errorResponse: !include /traits/errorResponse-trait.raml
   commonHeaders: !include /traits/commonHeaders-trait.raml
