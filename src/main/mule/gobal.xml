@@ -30,5 +30,6 @@ http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/
     </http:listener-config>
     <apikit:config name="d2l-rest-lms-config" api="d2l-rest-lms.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<d2l:config name="D2l_Config" doc:name="D2l Config" doc:id="d746a9d2-985f-42d7-8ccc-41c3285e23c3" >
+		<d2l:authorization-connection authorizationHeader="${d2l.token}" />
 	</d2l:config>
 </mule>
