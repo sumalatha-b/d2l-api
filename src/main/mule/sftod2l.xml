@@ -28,8 +28,8 @@ output application/json
   "UserName": payload.UserName__c default "",
   "RoleId": payload.RoleId__c as Number default 1,
   "IsActive": payload.IsActive__c as Boolean default true,
-  "SendCreationEmail": payload.SendCreationEmail__c as Boolean default false,
-  "Pronouns": payload.Pronouns__c default ""
+  "SendCreationEmail": payload.SendCreationEmail__c as Boolean default false
+  
 }
 ]]></ee:set-payload>
 			</ee:message>
