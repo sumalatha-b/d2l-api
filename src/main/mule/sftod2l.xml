@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/
 		</salesforce:new-object-listener>
 		<logger level="INFO" doc:name="Salesforce to D2L Create Flow Started Logger" doc:id="2215c5db-4f5b-4ca0-8778-160ec017bee9" message="Salesforce to D2L Create Flow Started"/>
 		<logger level="INFO" doc:name="SF Payload Logger" doc:id="6ac71363-131d-4cc6-b1b4-03e62e6b054a" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
-		<ee:transform doc:name="D2LRequest" doc:id="8bbaf7c0-3261-49b6-92de-01c711441cb2" >
+		<ee:transform doc:name="D2LCreateRequest" doc:id="8bbaf7c0-3261-49b6-92de-01c711441cb2" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -35,8 +35,8 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="D2L Request Logger" doc:id="feca9484-0e17-46eb-9b3a-80fd255661e7" message="#[payload]"/>
-		<d2l:post-lp-version-users doc:name="User - Create User" doc:id="bf5d5849-b50a-40a2-90a7-6b6c28bf4c2b" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]"/>
-		<ee:transform doc:name="D2L Response" doc:id="4426128e-0371-40e6-b465-ff42a1e15ea4" >
+		<d2l:post-d2l-api-lp-api-version-users doc:name="User - Create User" doc:id="236e7098-787f-4541-a679-672aaa14af6b" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" correlationIdHeader="#[correlationId]"/>
+		<ee:transform doc:name="D2LCreateResponse" doc:id="4426128e-0371-40e6-b465-ff42a1e15ea4" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -46,5 +46,83 @@ payload]]></ee:set-payload>
 		</ee:transform>
 		<logger level="INFO" doc:name="D2L Response Logger" doc:id="5b1ee6e2-f76e-42a6-88f5-2a6849897ce0" message="#[payload]"/>
 		<logger level="INFO" doc:name="Salesforce to D2L Create Flow Ended Logger" doc:id="978387d0-9b39-4539-8002-7e51d6e82ea1" message="Salesforce to D2L Create Flow Ended"/>
+	</flow>
+	<flow name="sftod2lUpdateFlow" doc:id="23d9bd7a-4dd2-4e45-b51f-21c7b85c5221" >
+		<salesforce:modified-object-listener doc:name="On Modified Object" doc:id="0c896da6-de00-4283-a101-a3eb53c4209a" config-ref="Salesforce_Config" objectType="D2L_user__c">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</salesforce:modified-object-listener>
+		<logger level="INFO" doc:name="Salesforce to D2L Update Flow Started Logger" doc:id="7fdacf5b-68ba-4e2c-8752-4845a4f1421a" message="Salesforce to D2L Update Flow Started" />
+		<logger level="INFO" doc:name="SF Payload Logger" doc:id="bcb04755-4ffc-44b5-bccf-8aa5266c54a2" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" />
+		<ee:transform doc:name="D2LUpdateRequest" doc:id="87d5342c-fd9a-4aea-b215-c89271eeed98" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "OrgDefinedId": payload.OrgDefinedId__c default "",
+  "FirstName": payload.FirstName__c default "",
+  "MiddleName": payload.MiddleName__c default "",
+  "LastName": payload.LastName__c default "",
+  "ExternalEmail": payload.ExternalEmail__c default "",
+  "UserName": payload.UserName__c default "",
+  "RoleId": payload.RoleId__c as Number default 1,
+  "IsActive": payload.IsActive__c as Boolean default true,
+  "SendCreationEmail": payload.SendCreationEmail__c as Boolean default false,
+  "Pronouns": payload.Pronouns__c default ""
+}
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="userId" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.UserId__c]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="D2L Request Logger" doc:id="9fb91bf6-d78e-41da-92bb-d920f853b339" message="#[payload]" />
+		<d2l:put-d2l-api-lp-api-version-users-user-id doc:name="User - Update user" doc:id="9d4df4f4-263b-429a-bf16-bb7a0cd0b231" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]"/>
+		<ee:transform doc:name="D2LUpdateResponse" doc:id="523f4d09-49ab-4bb6-8a50-029f1b77e39b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="D2L Response Logger" doc:id="ac53047f-b42d-4cf6-9179-1e4f02a40254" message="#[payload]" />
+		<logger level="INFO" doc:name="Salesforce to D2L Update Flow Ended Logger" doc:id="d47ea4ac-2e60-499f-bd39-cf5bbd58507c" message="Salesforce to D2L Update Flow Ended" />
+	</flow>
+	<flow name="sftod2lDeleteFlow" doc:id="7a4b4ddd-3501-421e-b4a7-b27883053c4a" >
+		<salesforce:deleted-object-listener doc:name="On Deleted Object" doc:id="e1f44f57-fef4-474a-99eb-fb7287f72112" config-ref="Salesforce_Config" objectType="D2L_user__c">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</salesforce:deleted-object-listener>
+		<logger level="INFO" doc:name="Salesforce to D2L Delete Flow Started Logger" doc:id="f717cdae-b41a-48b9-ad00-cb8faffc9bbe" message="Salesforce to D2L Delete  Flow Started" />
+		<logger level="INFO" doc:name="SF Payload Logger" doc:id="e70cb808-0c1c-4741-899e-6448e77d05b2" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" />
+		<logger level="INFO" doc:name="D2L Request Logger" doc:id="b2116c27-f49b-40d5-9d04-ded7bfde9160" message="#[payload]" />
+		<ee:transform doc:name="D2LDeleteRequest" doc:id="a3bc9568-24b8-45b7-93ff-efb2863f5464">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="userId"><![CDATA[%dw 2.0
+output application/json
+---
+payload.UserId__c]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<d2l:delete-d2l-api-lp-api-version-users-user-id doc:name="User - Delete User" doc:id="9c44b0f7-d648-4419-84ae-7a963f8555b7" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlation]"/>
+		<ee:transform doc:name="D2LDeleteResponse" doc:id="1445c674-1990-4ac0-8b7b-4771997009e4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="D2L Response Logger" doc:id="90b18384-f64b-4f39-b374-7413813f5e82" message="#[payload]" />
+		<logger level="INFO" doc:name="Salesforce to D2L Delete Flow Ended Logger" doc:id="c325c928-542c-4a8b-8e5a-08cc807fb24b" message="Salesforce to D2L Delete  Flow Ended" />
 	</flow>
 </mule>
