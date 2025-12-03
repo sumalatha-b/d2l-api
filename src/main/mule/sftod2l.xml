@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:d2l="http://www.mulesoft.org/schema/mule/d2l" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/current/mule-d2l.xsd">
+	<flow name="sftod2lCreateFlow" doc:id="b101bc29-b94c-4d52-9144-aa1001fecba9" >
+		<salesforce:new-object-listener doc:name="On New Object" doc:id="0091a0a9-5f47-499b-af4c-c09d577afc83" config-ref="Salesforce_Config" objectType="D2L_user__c">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</salesforce:new-object-listener>
+		<logger level="INFO" doc:name="Salesforce to D2L Create Flow Started Logger" doc:id="2215c5db-4f5b-4ca0-8778-160ec017bee9" message="Salesforce to D2L Create Flow Started"/>
+		<logger level="INFO" doc:name="SF Payload Logger" doc:id="6ac71363-131d-4cc6-b1b4-03e62e6b054a" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
+		<ee:transform doc:name="D2LRequest" doc:id="8bbaf7c0-3261-49b6-92de-01c711441cb2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "OrgDefinedId": payload.OrgDefinedId__c default "",
+  "FirstName": payload.FirstName__c default "",
+  "MiddleName": payload.MiddleName__c default "",
+  "LastName": payload.LastName__c default "",
+  "ExternalEmail": payload.ExternalEmail__c default "",
+  "UserName": payload.UserName__c default "",
+  "RoleId": payload.RoleId__c as Number default 1,
+  "IsActive": payload.IsActive__c as Boolean default true,
+  "SendCreationEmail": payload.SendCreationEmail__c as Boolean default false,
+  "Pronouns": payload.Pronouns__c default ""
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="D2L Request Logger" doc:id="feca9484-0e17-46eb-9b3a-80fd255661e7" message="#[payload]"/>
+		<d2l:post-lp-version-users doc:name="User - Create User" doc:id="bf5d5849-b50a-40a2-90a7-6b6c28bf4c2b" config-ref="D2l_Config" versionUriParam="#[attributes.uriParams.'version']" correlationIdHeader="#[correlationId]"/>
+		<ee:transform doc:name="D2L Response" doc:id="4426128e-0371-40e6-b465-ff42a1e15ea4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="D2L Response Logger" doc:id="5b1ee6e2-f76e-42a6-88f5-2a6849897ce0" message="#[payload]"/>
+		<logger level="INFO" doc:name="Salesforce to D2L Create Flow Ended Logger" doc:id="978387d0-9b39-4539-8002-7e51d6e82ea1" message="Salesforce to D2L Create Flow Ended"/>
+	</flow>
+</mule>
