@@ -1,24 +1,14 @@
 #%RAML 1.0 DataType
 type: object
 properties:
-  # Request fields
   FirstName: string
   MiddleName?: string
   LastName: string
   UserName: string
   ExternalEmail?: string
   OrgDefinedId?: string
-  UniqueIdentifier: string
-  Activation:
-    type: object
-    properties:
-      IsActive: boolean
-      StartDate?: datetime
-      EndDate?: datetime
+  IsActive: boolean
+  RoleId: integer
+  SendCreationEmail: boolean
 
-  # Response-only fields
-  OrgId?: number
-  UserId?: number
-  DisplayName?: string
-  LastAccessedDate?: datetime
-  Pronouns?: string
+ 

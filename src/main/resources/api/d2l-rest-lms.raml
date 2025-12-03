@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: D2L
-version: v1
-baseUri:  https://nexturn.d2l-partners.brightspace.com/d2l/api
+version: 1.28
+baseUri:  https://nexturn.d2l-partners.brightspace.com
 description: D2L LMS is a cloud-based learning management system that allows educators to create and manage courses, assignments, quizzes, and student communication in a flexible and user-friendly platform.
 protocols: [ HTTPS ]
 mediaType: application/json
@@ -77,14 +77,15 @@ types:
   getStudentActivity: !include /datatypes/events/getStudentActivity-dataType.raml
   getAssignmentGroups: !include /datatypes/assignmentGroups/getAssignnmentGroups-dataType.raml
   userResetPasswordResponse: !include /datatypes/users/userResetPasswordResponse-dataType.raml
+  createResponseUser: !include /datatypes/users/createUserResponse-dataType.raml
 
-/lp/{version}/users/:
+/d2l/api/lp/{apiVersion}/users/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   get:
     is: [commonHeaders,errorResponse]
     displayName: User - Get users
@@ -112,15 +113,15 @@ types:
       200:
         body:
           application/json:
-            type: createUser
+            type: createResponseUser
             example: !include /examples/users/createUserResponse-example.json
-/le/{version}/{orgUnitId}/classlist/:
+/d2l/api/le/{apiVersion}/{orgUnitId}/classlist/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       type: string
       required: true
@@ -137,13 +138,13 @@ types:
             examples:
               example1: !include /examples/roles/getClassList-example.json
 
-/lp/{version}/enrollments/orgUnits/{orgUnitId}/users/:
+/d2l/api/lp/{apiVersion}/enrollments/orgUnits/{orgUnitId}/users/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       type: string
       required: true
@@ -172,13 +173,13 @@ types:
             type: orgUnitEnrollments
             examples:
               success: !include /examples/orgUnit/getOrgUnitEnrollments-example.json
-/lp/{version}/enrollments/orgUnits/{orgUnitId}/users/{userId}:
+/d2l/api/lp/{apiVersion}/enrollments/orgUnits/{orgUnitId}/users/{userId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       type: string
       required: true
@@ -207,13 +208,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/lp/{version}/enrollments/users/{userId}/orgUnits/:
+/d2l/api/lp/{apiVersion}/enrollments/users/{userId}/orgUnits/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     userId:
       type: string
       required: true
@@ -240,13 +241,13 @@ types:
             examples:
               success: !include /examples/orgUnit/getUserOrgUnitsEnrollments-example.json
  
-/lp/{version}/orgstructure/{orgUnitId}:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       type: string
       required: true
@@ -276,13 +277,13 @@ types:
             type: updateOrgUnit
             example: !include /examples/orgUnit/updateOrgUnit-example.json
 
-/lp/{version}/orgstructure/{orgUnitId}/children/paged/:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}/children/paged/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       description: Org Unit ID (D2LID)
       type: string
@@ -308,13 +309,13 @@ types:
             type: getChildrenPagedResponse
             example: !include /examples/roles/getChildrenPagedResponse-example.json
 
-/lp/{version}/courses/{orgUnitId}:
+/d2l/api/lp/{apiVersion}/courses/{orgUnitId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       description: Org Unit ID (D2LID)
       type: string
@@ -353,13 +354,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/lp/{version}/coursetemplates/{orgUnitId}:
+/d2l/api/lp/{apiVersion}/coursetemplates/{orgUnitId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       description: Org Unit ID (D2LID)
       type: string
@@ -398,13 +399,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/le/{version}/{orgUnitId}/grades/{gradeObjectId}:
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 2.5
+      example: "1.51"
     orgUnitId:
       description: Org Unit ID (D2LID)
       type: string
@@ -427,13 +428,13 @@ types:
             example: !include /examples/grades/getGradeObjectResponse-example.json
 
 
-/lp/{version}/orgstructure/{orgUnitId}/ancestors/paged/:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}/ancestors/paged/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       description: Org Unit ID (D2LID)
       type: string
@@ -462,13 +463,13 @@ types:
             example: !include /examples/roles/getChildrenPagedResponse-example.json
 
 
-/lp/{version}/users/batch/:
+/d2l/api/lp/{apiVersion}/users/batch/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: User - Create users
@@ -485,13 +486,13 @@ types:
             type: createUsersResponse
             example: !include /examples/users/createUsersResponse-example.json
 
-/lp/{version}/users/{userId}/password:
+/d2l/api/lp/{apiVersion}/users/{userId}/password:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     userId:
       type: string
       required: true
@@ -514,13 +515,13 @@ types:
             type: userResetPasswordResponse
             example: !include /examples/users/userResetPasswordResponse-example.json
 
-/lp/{version}/roles/:
+/d2l/api/lp/{apiVersion}/roles/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: Roles - Create Role
@@ -538,13 +539,13 @@ types:
             type: RoleCopyRsponse
             example: !include /examples/roles/createRoleResponse-example.json
 
-/lp/{version}/enrollments/:
+/d2l/api/lp/{apiVersion}/enrollments/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: Enrollment - Create enrollment
@@ -562,13 +563,13 @@ types:
             example: !include /examples/enrollment/createEnrollmentResponse-example.json
 
 
-/lp/{version}/enrollments/batch/:
+/d2l/api/lp/{apiVersion}/enrollments/batch/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: Enrollment - Create enrollments
@@ -585,13 +586,13 @@ types:
             type: array
             items: batchEnrollmentResponse
             example: !include /examples/enrollment/batchEnrollmentsResponse-example.json
-/lp/{version}/users/{userId}:
+/d2l/api/lp/{apiVersion}/users/{userId}:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     userId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -627,13 +628,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/lp/{version}/{orgUnitId}/roles/:
+/d2l/api/lp/{apiVersion}/{orgUnitId}/roles/:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -645,13 +646,13 @@ types:
           application/json:
             type: getRoles
             example: !include /examples/roles/getRoles-example.json
-/lp/{version}/roles/{roleId}:
+/d2l/api/lp/{apiVersion}/roles/{roleId}:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     roleId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -664,13 +665,13 @@ types:
             type: getRoles
             example: !include /examples/roles/getRoles-example.json
 
-/lp/{version}/attributes/users/{userId}:
+/d2l/api/lp/{apiVersion}/attributes/users/{userId}:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     userId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -705,13 +706,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/le/{version}/{orgUnitId}/grades/final/values/:
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -729,13 +730,13 @@ types:
             type: getUsersFinalGrades
             example: !include /examples/grades/getUsersFinalGrades-example.json
 
-/le/{version}/{orgUnitId}/grades/final/values/{userId}:           
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/{userId}:           
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 2.5
+      example: "2.5"
     orgUnitId: string
     userId: string
   get:
@@ -751,13 +752,13 @@ types:
             type: getGradesByUser
             example: !include /examples/grades/getGradesByUser-example.json
 
-/le/{version}/grades/values/{userId}:
+/d2l/api/le/{apiVersion}/grades/values/{userId}:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     userId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -773,13 +774,13 @@ types:
             type: getUsersFinalGrades
             example: !include /examples/grades/getUsersFinalGrades-example.json
 
-/le/{version}/{orgUnitId}/grades/{gradeObjectId}/values/:
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId: string
     gradeObjectId: string
   get:
@@ -797,13 +798,13 @@ types:
           application/json:
             type: getUsersFinalGrades
             example: !include /examples/grades/getUsersFinalGrades-example.json
-/le/{version}/{orgUnitId}/grades/{gradeObjectId}/values/{userId}:
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/{userId}:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 2.5
+      example: "2.5"
     orgUnitId: string
     gradeObjectId: string
     userId: string
@@ -817,13 +818,13 @@ types:
           application/json:
             type: getGradesByUser
             example: !include /examples/grades/getGradesByUser-example.json
-/le/{version}/grades/courseCompletion/{userId}:
+/d2l/api/le/{apiVersion}/grades/courseCompletion/{userId}:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     userId: string
   get:
     is: [commonHeaders,errorResponse]
@@ -840,13 +841,13 @@ types:
             type: getCourseCompletion
             example: !include /examples/course/getCourseCompletion-example.json
 
-/lp/{version}/orgstructure/{orgUnitId}/children/{childOrgUnitId}:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}/children/{childOrgUnitId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28    
+      example: "1.28"    
     orgUnitId:
       type: string
       description: D2L parent Org Unit ID
@@ -863,13 +864,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/lp/{version}/orgstructure/{orgUnitId}/parents/{parentOrgUnitId}:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}/parents/{parentOrgUnitId}:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId:
       type: string
       description: D2L Org Unit ID (child)
@@ -886,13 +887,13 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/lp/{version}/orgstructure/:
+/d2l/api/lp/{apiVersion}/orgstructure/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: Orgunit - Create orgunit
@@ -907,13 +908,13 @@ types:
           application/json:
             type: orgUnit
             example: !include /examples/orgStructure/createOrgUnitResponse-example.json
-/lp/{version}/orgstructure/{orgUnitId}/parents/:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}/parents/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId: string
   post:
     is: [commonHeaders,errorResponse]
@@ -932,13 +933,13 @@ types:
             type: commonResponse
             example: !include /examples/common/common-example.json
 
-/lp/{version}/orgstructure/{orgUnitId}/children/:
+/d2l/api/lp/{apiVersion}/orgstructure/{orgUnitId}/children/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId: string
   post:
     is: [commonHeaders,errorResponse]
@@ -957,13 +958,13 @@ types:
             type: commonResponse
             example: !include /examples/common/common-example.json
 
-/lp/{version}/courses/:
+/d2l/api/lp/{apiVersion}/courses/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: Course Offering - Create course offering
@@ -978,13 +979,13 @@ types:
           application/json:
             type: resCreateCourseOffering
             example: !include /examples/courseOffering/createCourseOfferingResponse-example.json
-/lp/{version}/coursetemplates/:
+/d2l/api/lp/{apiVersion}/coursetemplates/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
   post:
     is: [commonHeaders,errorResponse]
     displayName: Course Template - Create course template
@@ -999,13 +1000,13 @@ types:
           application/json:
             type: resCourseTemplate
             example: !include /examples/courseTemplate/createCourseTemplateResponse-example.json
-/le/{version}/{orgUnitId}/calendar/events/myevents/:
+/d2l/api/le/{apiVersion}/{orgUnitId}/calendar/events/myevents/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 2.5
+      example: "1.50"
     orgUnitId:
       type: string
   get:
@@ -1018,13 +1019,13 @@ types:
           application/json:
             type: getStudentActivity
             example: !include /examples/events/getStudentActivity-example.json
-/le/{version}/{orgUnitId}/grades/categories/:
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/categories/:
   uriParameters:
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 2.5
+      example: "1.51"
     orgUnitId:
       type: string
   get:
@@ -1037,13 +1038,13 @@ types:
           application/json:
             type: getAssignmentGroups
             example: !include /examples/assignmentGroups/getAssignmentGroups-example.json
-/le/{version}/{orgUnitId}/grades/courseCompletion/:
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/courseCompletion/:
   uriParameters: 
-    version:
-      description: API version (D2LVERSION)
-      type: any
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
       required: true
-      example: 1.28
+      example: "1.28"
     orgUnitId: string
   get:
     is: [commonHeaders,errorResponse]
