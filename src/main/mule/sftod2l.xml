@@ -25,7 +25,7 @@ output application/json
   "MiddleName": payload.MiddleName__c default "",
   "LastName": payload.LastName__c default "",
   "ExternalEmail": payload.ExternalEmail__c default "",
-  "UserName": payload.UserName__c default "",
+  "UserName": payload.Name default "",
   "RoleId": payload.RoleId__c as Number default 1,
   "IsActive": payload.IsActive__c as Boolean default true,
   "SendCreationEmail": payload.SendCreationEmail__c as Boolean default false
@@ -43,14 +43,17 @@ output application/json
 output application/json
 ---
 [{
+	OrgDefinedId__c: vars.userResponse.OrgDefinedId,
 	Name: vars.userResponse.UserName,
 	UserId__c: vars.userResponse.UserId,
-	UniqueIdentifier__c: vars.userResponse.UniqueIdentifier
+	UniqueIdentifier__c: vars.userResponse.UniqueIdentifier,
+	OrgId__c: vars.userResponse.OrgId,
+	DisplayName__c: vars.userResponse.DisplayName
 }]]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="SF Update Request Logger" doc:id="f3d81de7-a7ee-4d03-b471-e8a948175934" message="#[payload]"/>
-		<salesforce:upsert doc:name="Upsert" doc:id="5a7d4035-eebf-4c62-9037-858b403db1c6" config-ref="Salesforce_Config" objectType="D2L_user__c" externalIdFieldName="Name"/>
+		<salesforce:upsert doc:name="Upsert" doc:id="5a7d4035-eebf-4c62-9037-858b403db1c6" config-ref="Salesforce_Config" objectType="D2L_user__c" externalIdFieldName="OrgDefinedId__c"/>
 		<logger level="INFO" doc:name="SF Response Logger" doc:id="5b1ee6e2-f76e-42a6-88f5-2a6849897ce0" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
 		<logger level="INFO" doc:name="Salesforce to D2L Create Flow Ended Logger" doc:id="978387d0-9b39-4539-8002-7e51d6e82ea1" message="Salesforce to D2L Create Flow Ended"/>
 	</flow>
@@ -68,18 +71,20 @@ output application/json
 output application/json
 ---
 {
-  "OrgDefinedId": payload.OrgDefinedId__c default "",
-  "FirstName": payload.FirstName__c default "",
-  "MiddleName": payload.MiddleName__c default "",
-  "LastName": payload.LastName__c default "",
-  "ExternalEmail": payload.ExternalEmail__c default "",
-  "UserName": payload.UserName__c default "",
-  "RoleId": payload.RoleId__c as Number default 1,
-  "IsActive": payload.IsActive__c as Boolean default true,
-  "SendCreationEmail": payload.SendCreationEmail__c as Boolean default false,
-  "Pronouns": payload.Pronouns__c default ""
-}
-]]></ee:set-payload>
+    "FirstName": payload.FirstName__c,
+    "MiddleName": payload.MiddleName__c default "",
+    "LastName": payload.LastName__c,
+    "UserName": payload.Name,
+    "ExternalEmail": payload.ExternalEmail__c default "",
+    "OrgDefinedId": payload.OrgDefinedId__c,
+    "UniqueIdentifier": payload.UniqueIdentifier__c,
+    "Activation": {
+        "IsActive": payload.IsActive__c default true
+    },
+    "DisplayName": payload.DisplayName__c default "",
+    "LastAccessedDate": payload.LastModifiedDate default "",
+    "Pronouns": payload.Pronouns__c default ""
+}]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="userId" ><![CDATA[%dw 2.0
@@ -120,7 +125,7 @@ output application/json
 payload.UserId__c]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<d2l:delete-d2l-api-lp-api-version-users-user-id doc:name="User - Delete User" doc:id="9c44b0f7-d648-4419-84ae-7a963f8555b7" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlation]"/>
+		<d2l:delete-d2l-api-lp-api-version-users-user-id doc:name="User - Delete User" doc:id="9c44b0f7-d648-4419-84ae-7a963f8555b7" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]"/>
 		<ee:transform doc:name="D2LDeleteResponse" doc:id="1445c674-1990-4ac0-8b7b-4771997009e4" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
