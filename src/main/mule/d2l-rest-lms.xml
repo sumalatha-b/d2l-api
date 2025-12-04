@@ -303,15 +303,6 @@
         </ee:transform>
         <d2l:get-d2l-api-lp-api-version-orgstructure-org-unit-id doc:name="Orgunit - Get orgunit" doc:id="0c9d770f-4611-4fd8-a646-5c39cb86b05f" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\ancestors\paged\:d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
-                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <d2l:get-d2l-api-lp-api-version-orgstructure-org-unit-id-ancestors-paged doc:name="Orgunit - Get orgunit ancestors" doc:id="9b805202-f3c7-42aa-963c-30377b91dcbc" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
-    </flow>
     <flow name="get:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\children\paged\:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
             <ee:variables>
@@ -446,5 +437,14 @@
             </ee:variables>
         </ee:transform>
         <d2l:post-d2l-api-lp-api-version-users-user-id-password doc:name="User - Send password reset" doc:id="69ee7849-edad-41fb-9517-6da10fb8ad01" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="get:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\ancestors\:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<d2l:get-d2l-api-lp-api-version-orgstructure-org-unit-id-ancestors doc:name="Orgunit - Get orgunit ancestors" doc:id="e2eecc56-93f3-4db5-96d3-c2017bb72558" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]"/>
     </flow>
 </mule>

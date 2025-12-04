@@ -90,7 +90,7 @@ output application/json
 				<ee:set-variable variableName="userId" ><![CDATA[%dw 2.0
 output application/json
 ---
-payload.UserId__c]]></ee:set-variable>
+payload.UserId__c as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="D2L Request Logger" doc:id="9fb91bf6-d78e-41da-92bb-d920f853b339" message="#[payload]" />
@@ -122,7 +122,7 @@ payload]]></ee:set-payload>
 				<ee:set-variable variableName="userId"><![CDATA[%dw 2.0
 output application/json
 ---
-payload.UserId__c]]></ee:set-variable>
+payload.UserId__c as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<d2l:delete-d2l-api-lp-api-version-users-user-id doc:name="User - Delete User" doc:id="9c44b0f7-d648-4419-84ae-7a963f8555b7" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]"/>
