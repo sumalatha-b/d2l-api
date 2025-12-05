@@ -114,7 +114,6 @@ payload]]></ee:set-payload>
 		</salesforce:deleted-object-listener>
 		<logger level="INFO" doc:name="Salesforce to D2L Delete Flow Started Logger" doc:id="f717cdae-b41a-48b9-ad00-cb8faffc9bbe" message="Salesforce to D2L Delete  Flow Started" />
 		<logger level="INFO" doc:name="SF Payload Logger" doc:id="e70cb808-0c1c-4741-899e-6448e77d05b2" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" />
-		<logger level="INFO" doc:name="D2L Request Logger" doc:id="b2116c27-f49b-40d5-9d04-ded7bfde9160" message="#[payload]" />
 		<ee:transform doc:name="D2LDeleteRequest" doc:id="a3bc9568-24b8-45b7-93ff-efb2863f5464">
 			<ee:message>
 			</ee:message>
@@ -125,6 +124,7 @@ output application/json
 payload.UserId__c as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="D2L Request Logger" doc:id="b2116c27-f49b-40d5-9d04-ded7bfde9160" message="#[payload]" />
 		<d2l:delete-d2l-api-lp-api-version-users-user-id doc:name="User - Delete User" doc:id="9c44b0f7-d648-4419-84ae-7a963f8555b7" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]"/>
 		<ee:transform doc:name="D2LDeleteResponse" doc:id="1445c674-1990-4ac0-8b7b-4771997009e4" >
 			<ee:message >
