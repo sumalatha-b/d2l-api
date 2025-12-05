@@ -135,15 +135,6 @@
         </ee:transform>
         <d2l:delete-d2l-api-lp-api-version-users-user-id doc:name="User - Delete User" doc:id="272b5fce-d535-4bc0-b227-41b56e09ce4e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\d2l\api\le\(apiVersion)\grades\courseCompletion\(userId):d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
-                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <d2l:get-d2l-api-le-api-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="11f5729a-8825-4648-8975-5277f6d371d9" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
-    </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\grades\values\(userId):d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
             <ee:variables>
@@ -188,15 +179,6 @@
             </ee:variables>
         </ee:transform>
         <d2l:get-d2l-api-le-api-version-org-unit-id-grades-course-completion doc:name="Grades - Get course completions" doc:id="b636bc37-9fae-42fe-98c5-2c549c597f01" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
-    </flow>
-    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\values\:d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
-                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-values doc:name="Grades - Get users'' final grades" doc:id="82099d35-32ff-4302-bd9c-fb451cf5fe19" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\values\(userId):d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -273,7 +255,7 @@
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l:get-d2l-api-lp-api-version-enrollments-org-units-org-unit-id-users doc:name="Enrollment - Get enrollments by orgunit" doc:id="2b6e399c-6c39-4a50-89a5-f4cef725146e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
+        <d2l:get-d2l-api-lp-api-version-enrollments-org-units-org-unit-id-users doc:name="Enrollment - Get enrollments by orgunit" doc:id="2b6e399c-6c39-4a50-89a5-f4cef725146e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" isActiveQueryParam="#[isEmpty(attributes.queryParams.isActive)]" />
     </flow>
     <flow name="get:\d2l\api\lp\(apiVersion)\enrollments\orgUnits\(orgUnitId)\users\(userId):d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -445,6 +427,24 @@
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<d2l:get-d2l-api-lp-api-version-orgstructure-org-unit-id-ancestors doc:name="Orgunit - Get orgunit ancestors" doc:id="e2eecc56-93f3-4db5-96d3-c2017bb72558" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]"/>
+        <d2l:get-d2l-api-lp-api-version-orgstructure-org-unit-id-ancestors doc:name="Orgunit - Get orgunit ancestors" doc:id="e2eecc56-93f3-4db5-96d3-c2017bb72558" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="get:\d2l\api\le\(apiVersion)\grades\courseCompletion\(userId)\:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
+                <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<d2l:get-d2l-api-le-api-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="d44792ba-9572-47cf-b1a0-babc2e3ad977" config-ref="D2l_Config" userIdUriParam="#[vars.userId]" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]"/>
+    </flow>
+    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\vaules\:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="68b79d8e-a235-492b-ac56-a05817810d8c" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" isGradedQueryParam="#[isEmpty(attributes.queryParams.isGraded)]" correlationIdHeader="#[correlationId]"/>
     </flow>
 </mule>
