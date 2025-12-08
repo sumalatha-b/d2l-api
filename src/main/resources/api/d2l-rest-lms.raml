@@ -706,29 +706,6 @@ types:
           application/json:
             type: commonResponse
             example: !include /examples/common/common-example.json
-/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/:
-  uriParameters: 
-    apiVersion:
-      description: API apiVersion (D2LapiVersion)
-      type: string
-      required: true
-      example: "1.28"
-    orgUnitId: string
-  get:
-    is: [commonHeaders,errorResponse]
-    displayName: Grades - Get users' final grades
-    description: Get users final grades
-    queryParameters:
-      sort?: string
-      pageSize?: integer
-      isGraded?: boolean
-      searchText?: string
-    responses:
-      200:
-        body:
-          application/json:
-            type: getUsersFinalGrades
-            example: !include /examples/grades/getUsersFinalGrades-example.json
 
 /d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/{userId}:           
   uriParameters: 
@@ -818,7 +795,7 @@ types:
           application/json:
             type: getGradesByUser
             example: !include /examples/grades/getGradesByUser-example.json
-/d2l/api/le/{apiVersion}/grades/courseCompletion/{userId}:
+/d2l/api/le/{apiVersion}/grades/courseCompletion/{userId}/:
   uriParameters: 
     apiVersion:
       description: API apiVersion (D2LapiVersion)
@@ -1062,7 +1039,29 @@ types:
             type: getCourseCompletion
             example: !include /examples/course/getCourseCompletion-example.json
 
-
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/vaules/:
+  uriParameters: 
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
+      required: true
+      example: "1.28"
+    orgUnitId: string
+  get:
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get users' final grades
+    description: Get users final grades
+    queryParameters:
+      sort?: string
+      pageSize?: integer
+      isGraded?: boolean
+      searchText?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsersFinalGrades
+            example: !include /examples/grades/getUsersFinalGrades-example.json
 
 
 
