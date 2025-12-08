@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:d2l="http://www.mulesoft.org/schema/mule/d2l" xmlns:blackboard="http://www.mulesoft.org/schema/mule/blackboard"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:blackboard-rest-lms="http://www.mulesoft.org/schema/mule/blackboard-rest-lms" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/current/mule-d2l.xsd">
+	<flow name="d2lToSalesforceCreateAndUpdateUserFlow" doc:id="b58a9eea-c438-4167-98df-d8fd0a223a17" >
+		<http:listener doc:name="Listener" doc:id="95c966a6-b906-4714-a79c-aaa0a01d441a" config-ref="d2l-rest-lms-httpListenerConfig" path="/d2l/user/{userId}"/>
+		<logger level="INFO" doc:name="D2LToSalesforceCreateAndUpdateUserFlowStarted Logger" doc:id="383e892b-f7f1-4d53-8644-8601c62318e2" message="D2LToSalesforceCreateAndUpdateUserFlowStarted"/>
+		<d2l:get-d2l-api-lp-api-version-users-user-id doc:name="User - Get user" doc:id="05c80d4d-503c-451b-bb8f-1fcc24be1ce2" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[attributes.queryParams.userId]" correlationIdHeader="#[correlationId]"/>
+		<logger level="INFO" doc:name="D2L User Response Payload Logger" doc:id="7444cfac-4840-439f-a3aa-f41f8fdeaa8e" message="#[payload]"/>
+		<ee:transform doc:name="SF Request Payload" doc:id="feb9e7cb-6808-4824-b0ee-30e16fb2832e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[{
+    FirstName__c: payload.FirstName,
+    MiddleName__c: payload.MiddleName default "",
+    LastName__c: payload.LastName,
+    Name: payload.UserName,
+    ExternalEmail__c: payload.ExternalEmail default "",
+    OrgDefinedId__c: payload.OrgDefinedId,
+    UniqueIdentifier__c: payload.UniqueIdentifier,
+    IsActive__c: payload.Activation.IsActive default true,
+    DisplayName__c: payload.DisplayName default "",
+    LastModifiedDate: payload.LastAccessedDate default "",
+    Pronouns__c: payload.Pronouns default ""
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="SF Request Payload Logger" doc:id="1b6a4bf2-3ce2-4668-a8d4-7d14c7cf8aae" message="#[payload]"/>
+		<salesforce:upsert doc:name="Upsert" doc:id="f59a4e4e-f352-4c8e-b92a-3dbd9acb1c83" config-ref="Salesforce_Config" objectType="D2L_user__c" externalIdFieldName="OrgDefinedId__c"/>
+		<ee:transform doc:name="SF Response Payload" doc:id="19963d17-c84f-4464-934e-ea2f3d2ea43c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="SF Response Payload Logger" doc:id="af9d41dc-65a3-4685-8917-1e1037ae335f" message="#[payload]"/>
+		<logger level="INFO" doc:name="D2LToSalesforceCreateAndUpdateUserFlowEnded Logger" doc:id="fc1e162f-166a-4559-b7df-a6623f791c7a" message="D2LToSalesforceCreateAndUpdateUserFlowEnded"/>
+	</flow>
+	<flow name="d2lToSalesforceDeleteUserFlow" doc:id="53eb874f-3ed3-4b23-999a-3c700a8cefd2" >
+		<http:listener doc:name="Listener" doc:id="f73174e8-3529-45c8-b854-14a1c9ad0dc9" config-ref="d2l-rest-lms-httpListenerConfig" path="/delete/d2l/user/{userId}"/>
+		<logger level="INFO" doc:name="D2L to Salesforce Delete Flow Started Logger" doc:id="4fcd76bd-fb7d-4c47-b465-81c38713a21a" message="D2L to Salesforce Delete User Flow Started"/>
+		<d2l:get-d2l-api-lp-api-version-users-user-id doc:name="User - Get user" doc:id="b6894ec8-4bb1-42b7-8ccf-406d7907193b" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" userIdUriParam="#[attributes.queryParams.userId]" correlationIdHeader="#[correlationId]"/>
+		<logger level="INFO" doc:name="D2L User Response Payload Logger" doc:id="038ad01f-3f94-496d-b760-7f78be6b3ac7" message="#[payload]" />
+		<ee:transform doc:name="sfRequestPayload" doc:id="4a4dd3d9-eb05-466e-8ce0-068448ac0043">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+[{
+	Name: payload.UserName
+			
+}]
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="SF Request Payload Logger" doc:id="edc487bf-bf76-4ba2-8808-f196a36df381" message="#[payload]" />
+		<salesforce:query doc:name="Query" doc:id="60bd41eb-2e82-4ee4-9654-311ae6c1a8f3" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[select id, Name from D2L_user__c where Name = :Name]]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/java
+---
+{
+	Name : "'" ++ payload.Name[0] ++ "'"
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="SF Query Reponse" doc:id="a1635e80-4c9e-4648-892c-65cc18e9884c">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.Id]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="2d9ac6ab-abfc-4678-a57c-605513f6e111">
+			<when expression="#[!isEmpty(payload)]">
+				<salesforce:delete doc:name="Delete" doc:id="78beb5e2-0ff3-4ce0-ada5-2b2815ea74ee" config-ref="Salesforce_Config" />
+				<ee:transform doc:name="SF Delete Response" doc:id="20f25e2a-e2f3-44b1-8388-6785ecf5f9df">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Empty id's Logger" doc:id="e8e06582-7a5c-4b18-adf3-4c9536a0ec6a" message="empty id's" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="SF Response Logger" doc:id="d0492b56-84fc-4c8c-a0fd-d2918c8a87d5" message="#[payload]" />
+		<logger level="INFO" doc:name="D2L to Salesforce Delete Flow Ended Logger" doc:id="d177276b-ef6a-49da-819d-cbcea37d7366" message="D2L to Salesforce Delete User Flow Ended" />
+	</flow>
+</mule>
