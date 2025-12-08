@@ -436,7 +436,7 @@
                 <ee:set-variable variableName="userId">attributes.uriParams.'userId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<d2l:get-d2l-api-le-api-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="d44792ba-9572-47cf-b1a0-babc2e3ad977" config-ref="D2l_Config" userIdUriParam="#[vars.userId]" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]"/>
+        <d2l:get-d2l-api-le-api-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="d44792ba-9572-47cf-b1a0-babc2e3ad977" config-ref="D2l_Config" userIdUriParam="#[vars.userId]" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\vaules\:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -445,6 +445,15 @@
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="68b79d8e-a235-492b-ac56-a05817810d8c" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" isGradedQueryParam="#[isEmpty(attributes.queryParams.isGraded)]" correlationIdHeader="#[correlationId]"/>
+        <d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="68b79d8e-a235-492b-ac56-a05817810d8c" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" isGradedQueryParam="#[isEmpty(attributes.queryParams.isGraded)]" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="post:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\children\:text\plain:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<d2l:post-d2l-api-lp-api-version-orgstructure-org-unit-id-children doc:name="Orgunit - Add orgunit child" doc:id="ca195d08-99d6-4dea-814b-b08a999b419e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
 </mule>
