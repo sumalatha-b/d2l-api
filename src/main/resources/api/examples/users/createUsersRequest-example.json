@@ -1,18 +1,14 @@
-{
-  "newUsers": [
-    {
-      "FirstName": "John",
-      "MiddleName": "A",
-      "LastName": "Doe",
-      "UserName": "jdoe",
-      "ExternalEmail": "jdoe@example.com",
-      "OrgDefinedId": "ORG123",
-      "UniqueIdentifier": "UID12345",
-      "Activation": {
-        "StartDate": "2025-09-22T00:00:00Z",
-        "EndDate": "2026-09-22T00:00:00Z",
-        "IsActive": true
-      }
-    }
-  ]
-}
+[
+  {
+    "OrgDefinedId": "17678912",
+    "FirstName": "Alice112",
+    "MiddleName": "Marie112",
+    "LastName": "Smith121",
+    "ExternalEmail": "alice11.smith12@example.com",
+    "UserName": "Alice1Smith112",
+    "RoleId": 104,
+    "IsActive": true,
+    "SendCreationEmail": false,
+    "Pronouns": null
+  }
+]
