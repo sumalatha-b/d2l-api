@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>1ce2d19f-fb3c-4f06-9a6f-7061cae8e44e</groupId>
 			<artifactId>d2l</artifactId>
-			<version>1.0.13-BETA</version>
+			<version>1.0.14-BETA</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>

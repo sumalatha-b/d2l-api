@@ -24,7 +24,7 @@ securitySchemes:
     settings:
       authorizationUri: https://auth.brightspace.com/oauth2/auth
       accessTokenUri: https://auth.brightspace.com/core/connect/token
-      scopes: [ core:*:* role:detail:read ]
+      scopes: [ core:*:* role:detail:read grades:gradevalues:read grades:gradeobjects:read ]
       authorizationGrants: [ authorization_code ]
 securedBy:
   - oauth_2_0
@@ -52,6 +52,7 @@ types:
   createEnrollmentResponse: !include /datatypes/enrollment/createEnrollmentdataResponse-dataType.raml
   batchEnrollmentRequest:  !include /datatypes/enrollment/batchEnrollmentsRequest-dataType.raml
   batchEnrollmentResponse: !include /datatypes/enrollment/batchEnrollmentsResponse-dataType.raml
+  getRole: !include /datatypes/roles/getRole-dataType.raml
   getRoles: !include /datatypes/roles/getRoles-dataType.raml
   getUserAttributes: !include /datatypes/userAttributes/getUserAttributes-datatype.raml
   getUsersFinalGrades: !include /datatypes/grades/getUsersFinalGrades-dataType.raml
@@ -538,6 +539,16 @@ types:
           application/json:
             type: RoleCopyRsponse
             example: !include /examples/roles/createRoleResponse-example.json
+  get:
+    is: [commonHeaders,errorResponse]
+    displayName: Roles - Get roles
+    description: Get roles 
+    responses:
+      200:
+        body:
+          application/json:
+            type: getRoles
+            example: !include /examples/roles/getRoles-example.json
 
 /d2l/api/lp/{apiVersion}/enrollments/:
   uriParameters:
@@ -662,8 +673,8 @@ types:
       200:
         body:
           application/json:
-            type: getRoles
-            example: !include /examples/roles/getRoles-example.json
+            type: getRole
+            example: !include /examples/roles/getRole-example.json
 
 /d2l/api/lp/{apiVersion}/attributes/users/{userId}:
   uriParameters: 
@@ -901,6 +912,7 @@ types:
       Body must contain a single JSON number representing the parent OrgUnitId.
     body:
       application/json:
+      text/plain:
         type: addParentOrgUnit
         example: !include /examples/orgStructure/addParentOrgUnit-example.json
     responses:

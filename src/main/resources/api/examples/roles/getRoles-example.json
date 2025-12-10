@@ -1,14 +1,30 @@
-{
-  "Identifier": "ROLE_001",
-  "DisplayName": "Instructor",
-  "Code": "INST",
-  "Description": "Instructor role with full permissions",
-  "RoleAlias": "Teacher",
-  "IsCascading": true,
-  "AccessFutureCourses": true,
-  "AccessInactiveCourses": false,
-  "AccessPastCourses": true,
-  "ShowInGrades": true,
-  "ShowInUserProgress": true,
-  "InClassList": true
-}
+[
+  {
+    "Identifier": "ROLE_001",
+    "DisplayName": "Instructor",
+    "Code": "INST",
+    "Description": "Instructor role with full permissions",
+    "RoleAlias": "Teacher",
+    "IsCascading": true,
+    "AccessFutureCourses": true,
+    "AccessInactiveCourses": false,
+    "AccessPastCourses": true,
+    "ShowInGrades": true,
+    "ShowInUserProgress": true,
+    "InClassList": true
+  },
+  {
+    "Identifier": "ROLE_002",
+    "DisplayName": "Learner",
+    "Code": "LEARN",
+    "Description": "Learner role with basic permissions",
+    "RoleAlias": "Student",
+    "IsCascading": false,
+    "AccessFutureCourses": false,
+    "AccessInactiveCourses": false,
+    "AccessPastCourses": true,
+    "ShowInGrades": true,
+    "ShowInUserProgress": true,
+    "InClassList": true
+  }
+]
