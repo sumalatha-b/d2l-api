@@ -151,7 +151,7 @@
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l:get-d2l-api-le-api-version-org-unit-id-calendar-events-myevents doc:name="Event - Student Activity" doc:id="9ae48ab3-824a-4aa3-a956-76cd9d963579" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
+        <d2l:get-d2l-api-le-api-version-org-unit-id-calendar-events-myevents doc:name="Event - Student Activity" doc:id="9ae48ab3-824a-4aa3-a956-76cd9d963579" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" startDateTimeQueryParam='#[attributes.queryParams.startDateTime default ""]' endDateTimeQueryParam='#[attributes.queryParams.endDateTime default ""]'/>
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\classlist\:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">

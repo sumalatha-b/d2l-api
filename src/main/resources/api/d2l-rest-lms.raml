@@ -775,11 +775,7 @@ types:
     is: [commonHeaders,errorResponse]
     displayName: Grades - Get users' grades by grade object
     description: Get users grades by grade object
-    queryParameters:
-      sort?: string
-      pageSize?: integer
-      isGraded?: boolean
-      searchText?: string
+    
     responses:
       200:
         body:
@@ -993,7 +989,7 @@ types:
 /d2l/api/le/{apiVersion}/{orgUnitId}/calendar/events/myevents/:
   uriParameters:
     apiVersion:
-      description: API apiVersion (D2LapiVersion)
+      description: API  apiVersion (D2LapiVersion)
       type: string
       required: true
       example: "1.50"
@@ -1003,6 +999,10 @@ types:
     is: [commonHeaders,errorResponse]
     displayName: Event - Student Activity
     description: Student Activity
+    queryParameters:
+      startDateTime: string
+      endDateTime: string
+        
     responses:
       200:
         body:

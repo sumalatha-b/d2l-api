@@ -1,10 +1,46 @@
 #%RAML 1.0 DataType
 type: object
+displayName: CourseDetails
+description: DataType for course creation or update.
+
 properties:
-  Name: string
-  Code: string
-  StartDate: string 
-  EndDate: string 
-  IsActive: boolean
-  Description?: string
-  CanSelfRegister?: boolean
+  Name:
+    type: string
+    required: true
+    
+
+  Code:
+    type: string
+    required: true
+    
+
+  StartDate:
+    type: datetime
+    required: true
+    
+
+  EndDate:
+    type: datetime
+    required: true
+    
+
+  IsActive:
+    type: boolean
+    required: true
+    
+
+  Description:
+    type: object
+    required: true
+    properties:
+      Content:
+        type: string
+        required: true
+        
+      Type:
+        type: string
+        required: true
+        
+  CanSelfRegister?:
+    type: boolean
+    

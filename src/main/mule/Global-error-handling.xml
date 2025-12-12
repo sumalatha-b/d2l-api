@@ -4,8 +4,8 @@ output application/json
 ---
 {
   status: if(error.description  == "405 Method Not Allowed") 405 else vars.httpStatus,
-  errorType: (error.errorType.identifier default "INTERNAL_SERVER_ERROR"),
-  message: (error.description default "Unexpected error occurred")
+  errorType:(error.errorType.identifier default "INTERNAL_SERVER_ERROR"),
+  message: error.errorMessage.payload default (error.description default "Unexpected error occurred")
 }
 ]]></ee:set-payload> </ee:message>
 			<ee:variables >
