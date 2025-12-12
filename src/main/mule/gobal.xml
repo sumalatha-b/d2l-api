@@ -29,7 +29,13 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
             </tls:context>
         </http:listener-connection>
     </http:listener-config>
-    <apikit:config name="d2l-rest-lms-config" api="d2l-rest-lms.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="d2l-rest-lms-config" api="d2l-rest-lms.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" >
+		<apikit:flow-mappings >
+			<apikit:flow-mapping resource="/d2l/api/le/{apiVersion}/{orgUnitId}/calendar/events/myevents/" action="get" content-type="application/json" flow-ref="get:\d2l\api\le\(apiVersion)\(orgUnitId)\calendar\events\myevents\:d2l-rest-lms-config" />
+			<apikit:flow-mapping resource="/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/" action="get" content-type="application/json" flow-ref="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\(gradeObjectId)\values\:d2l-rest-lms-config" />
+			<apikit:flow-mapping resource="/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/vaules/" action="get" content-type="application/json" flow-ref="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\vaules\:d2l-rest-lms-config" />
+		</apikit:flow-mappings>
+	</apikit:config>
 	<os:object-store name="Object_store" doc:name="Object store" doc:id="1501a023-e5a0-40df-8478-ad9494762ba7" />
 	<d2l:config name="D2l_Config" doc:name="D2l Config" doc:id="9df5fea6-03f2-44ee-8be3-77eeabbe5d2e" >
 		<d2l:oauth-2-0-connection >

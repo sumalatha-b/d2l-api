@@ -1,5 +1,4 @@
-{
-  "enrollments": [
+ [
     {
       "OrgUnitId": 101,
       "UserId": 1001,
@@ -13,4 +12,4 @@
       "SendEnrollmentEmail": false
     }
   ]
-}
+

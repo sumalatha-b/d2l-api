@@ -1,6 +1,5 @@
 #%RAML 1.0
 title: D2L
-version: 1.28
 baseUri:  https://nexturn.d2l-partners.brightspace.com
 description: D2L LMS is a cloud-based learning management system that allows educators to create and manage courses, assignments, quizzes, and student communication in a flexible and user-friendly platform.
 protocols: [ HTTPS ]
@@ -718,27 +717,6 @@ types:
             type: commonResponse
             example: !include /examples/common/common-example.json
 
-/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/{userId}:           
-  uriParameters: 
-    apiVersion:
-      description: API apiVersion (D2LapiVersion)
-      type: string
-      required: true
-      example: "2.5"
-    orgUnitId: string
-    userId: string
-  get:
-    is: [commonHeaders,errorResponse]
-    displayName: Grades - Get user's final grades
-    description: Get grades by user
-    queryParameters:
-      gradeType?: string
-    responses:
-      200:
-        body:
-          application/json:
-            type: getGradesByUser
-            example: !include /examples/grades/getGradesByUser-example.json
 
 /d2l/api/le/{apiVersion}/grades/values/{userId}:
   uriParameters: 
@@ -762,46 +740,7 @@ types:
             type: getUsersFinalGrades
             example: !include /examples/grades/getUsersFinalGrades-example.json
 
-/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/:
-  uriParameters: 
-    apiVersion:
-      description: API apiVersion (D2LapiVersion)
-      type: string
-      required: true
-      example: "1.28"
-    orgUnitId: string
-    gradeObjectId: string
-  get:
-    is: [commonHeaders,errorResponse]
-    displayName: Grades - Get users' grades by grade object
-    description: Get users grades by grade object
-    
-    responses:
-      200:
-        body:
-          application/json:
-            type: getUsersFinalGrades
-            example: !include /examples/grades/getUsersFinalGrades-example.json
-/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/{userId}:
-  uriParameters: 
-    apiVersion:
-      description: API apiVersion (D2LapiVersion)
-      type: string
-      required: true
-      example: "2.5"
-    orgUnitId: string
-    gradeObjectId: string
-    userId: string
-  get:
-    is: [commonHeaders,errorResponse]
-    displayName: Grades - Get user's grade by gradeobject
-    description: Get user grade by gradeobject
-    responses:
-      200:
-        body:
-          application/json:
-            type: getGradesByUser
-            example: !include /examples/grades/getGradesByUser-example.json
+
 /d2l/api/le/{apiVersion}/grades/courseCompletion/{userId}/:
   uriParameters: 
     apiVersion:
@@ -986,29 +925,7 @@ types:
           application/json:
             type: resCourseTemplate
             example: !include /examples/courseTemplate/createCourseTemplateResponse-example.json
-/d2l/api/le/{apiVersion}/{orgUnitId}/calendar/events/myevents/:
-  uriParameters:
-    apiVersion:
-      description: API  apiVersion (D2LapiVersion)
-      type: string
-      required: true
-      example: "1.50"
-    orgUnitId:
-      type: string
-  get:
-    is: [commonHeaders,errorResponse]
-    displayName: Event - Student Activity
-    description: Student Activity
-    queryParameters:
-      startDateTime: string
-      endDateTime: string
-        
-    responses:
-      200:
-        body:
-          application/json:
-            type: getStudentActivity
-            example: !include /examples/events/getStudentActivity-example.json
+
 /d2l/api/le/{apiVersion}/{orgUnitId}/grades/categories/:
   uriParameters:
     apiVersion:
@@ -1052,6 +969,28 @@ types:
             type: getCourseCompletion
             example: !include /examples/course/getCourseCompletion-example.json
 
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/{userId}:           
+  uriParameters: 
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
+      required: true
+      example: "2.5"
+    orgUnitId: string
+    userId: string
+  get:
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get user's final grades
+    description: Get grades by user
+    queryParameters:
+      gradeType?: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: getGradesByUser
+            example: !include /examples/grades/getGradesByUser-example.json
+			
 /d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/vaules/:
   uriParameters: 
     apiVersion:
@@ -1075,8 +1014,68 @@ types:
           application/json:
             type: getUsersFinalGrades
             example: !include /examples/grades/getUsersFinalGrades-example.json
+            
+/d2l/api/le/{apiVersion}/{orgUnitId}/calender/events/myevents/:
+  uriParameters:
+    apiVersion:
+      description: API  apiVersion (D2LapiVersion)
+      type: string
+      required: true
+      example: "1.75"
+    orgUnitId:
+      type: string
+  get:
+    is: [commonHeaders,errorResponse]
+    displayName: Event - Student Activity
+    description: Student Activity
+    queryParameters:
+      startDateTime: string
+      endDateTime: string    
+    responses:
+      200:
+        body:
+          application/json:
+            type: getStudentActivity
+            example: !include /examples/events/getStudentActivity-example.json
 
-
-
-
-
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/:
+  uriParameters: 
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
+      required: true
+      example: "1.28"
+    orgUnitId: string
+    gradeObjectId: string
+  get:
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get users' grades by grade object
+    description: Get users grades by grade object
+    
+    responses:
+      200:
+        body:
+          application/json:
+            type: getUsersFinalGrades
+            example: !include /examples/grades/getUsersFinalGrades-example.json
+			
+/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/{userId}:
+  uriParameters: 
+    apiVersion:
+      description: API apiVersion (D2LapiVersion)
+      type: string
+      required: true
+      example: "2.5"
+    orgUnitId: string
+    gradeObjectId: string
+    userId: string
+  get:
+    is: [commonHeaders,errorResponse]
+    displayName: Grades - Get user's grade by gradeobject
+    description: Get user grade by gradeobject
+    responses:
+      200:
+        body:
+          application/json:
+            type: getGradesByUser
+            example: !include /examples/grades/getGradesByUser-example.json
