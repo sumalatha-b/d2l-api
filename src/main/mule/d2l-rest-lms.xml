@@ -391,7 +391,7 @@ payload default error.description]]]></http:body>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l:post-d2l-api-lp-api-version-roles doc:name="Roles - Create Role" doc:id="818248f4-1537-428f-a9c8-49fe97f5fe43" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]"/>
+        <d2l:post-d2l-api-lp-api-version-roles doc:name="Roles - Create Role" doc:id="818248f4-1537-428f-a9c8-49fe97f5fe43" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]" />
     </flow>
     <flow name="post:\d2l\api\lp\(apiVersion)\users\:application\json:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -450,7 +450,7 @@ payload default error.description]]]></http:body>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="02fda3ff-135a-4ae1-bf6e-cdb1777bef3e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]"/>
+        <d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="02fda3ff-135a-4ae1-bf6e-cdb1777bef3e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="post:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\children\:text\plain:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
@@ -478,20 +478,13 @@ payload default error.description]]]></http:body>
         </ee:transform>
         <d2l:post-d2l-api-lp-api-version-orgstructure-org-unit-id-parents doc:name="Orgunit - Add orgunit parent" doc:id="af9c1470-1145-4b21-942d-781fbd4087ea" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\calender\events\myEvents\:d2l-rest-lms-config">
-        <http:listener doc:name="Listener" doc:id="c114f24a-4a05-49b0-a81d-87f5b470c3fb" config-ref="d2l-rest-lms-httpListenerConfig" path="/v1/d2l/api/le/{apiVersion}/{orgUnitId}/calendar/events/myEvents/" allowedMethods="GET" >
-			<http:error-response statusCode="#[vars.httpStatus default 500]" >
-				<http:body ><![CDATA[#[output application/json 
---- 
-payload default error.description]]]></http:body>
-			</http:error-response>
-		</http:listener>
+    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\calendar\events\myEvents\:d2l-rest-lms-config">
 		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<d2l:get-d2l-api-le-api-version-org-unit-id-calender-events-my-events doc:name="Event - Student Activity" doc:id="181de8e5-e2ca-41cd-affc-b1f7e1e768b7" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" startDateTimeQueryParam="#[(attributes.queryParams.startDateTime) as String]" endDateTimeQueryParam="#[(attributes.queryParams.endDateTime) as String]" correlationIdHeader="#[correlationId]"/>
+		<d2l:get-d2l-api-le-api-version-org-unit-id-calendar-events-my-events doc:name="Event - Student Activity" doc:id="e555bac8-4635-498e-a2d9-61f121efde19" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" startDateTimeQueryParam="#[attributes.queryParams.startDateTime]" endDateTimeQueryParam="#[attributes.queryParams.endDateTime]" correlationIdHeader="#[correlationId]"/>
     </flow>
 </mule>
