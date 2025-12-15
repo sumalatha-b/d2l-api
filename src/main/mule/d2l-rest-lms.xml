@@ -391,7 +391,7 @@ payload default error.description]]]></http:body>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <d2l:post-d2l-api-lp-api-version-roles doc:name="Roles - Create Role" doc:id="818248f4-1537-428f-a9c8-49fe97f5fe43" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" />
+        <d2l:post-d2l-api-lp-api-version-roles doc:name="Roles - Create Role" doc:id="818248f4-1537-428f-a9c8-49fe97f5fe43" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" deepCopyRoleIdQueryParam="#[attributes.queryParams.deepCopyRoleId]"/>
     </flow>
     <flow name="post:\d2l\api\lp\(apiVersion)\users\:application\json:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
