@@ -192,7 +192,14 @@
         <d2l:get-d2l-api-le-api-version-org-unit-id-grades-grade-object-id doc:name="Grades - Get grade object" doc:id="7bfa774a-71d1-4f47-9c39-da307e8cd71b" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" gradeObjectIdUriParam="#[vars.gradeObjectId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\(gradeObjectId)\values\:d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
+        <http:listener doc:name="Listener" doc:id="edadc102-2f51-4cef-9e1b-fb3b636d3fe2" config-ref="d2l-rest-lms-httpListenerConfig" path="/v1/d2l/api/le/{apiVersion}/{orgUnitId}/grades/{gradeObjectId}/values/">
+			<http:error-response statusCode="#[vars.httpStatus default 500]" >
+				<http:body ><![CDATA[#[output application/json 
+--- 
+payload default error.description]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
@@ -430,7 +437,14 @@
         <d2l:get-d2l-api-le-api-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="d44792ba-9572-47cf-b1a0-babc2e3ad977" config-ref="D2l_Config" userIdUriParam="#[vars.userId]" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\vaules\:d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
+        <http:listener doc:name="Listener" doc:id="655ac17b-4854-42a3-ac66-87d6eaa156bc" config-ref="d2l-rest-lms-httpListenerConfig" path="/v1/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/">
+			<http:error-response statusCode="#[vars.httpStatus default 500]" >
+				<http:body ><![CDATA[#[output application/json
+ --- 
+ payload default error.description]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
@@ -465,7 +479,14 @@
         <d2l:post-d2l-api-lp-api-version-orgstructure-org-unit-id-parents doc:name="Orgunit - Add orgunit parent" doc:id="af9c1470-1145-4b21-942d-781fbd4087ea" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\calender\events\myevents\:d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
+        <http:listener doc:name="Listener" doc:id="f2f498d2-daa3-42c1-8dcd-ded0939c3dc0" config-ref="d2l-rest-lms-httpListenerConfig" path="/v1/d2l/api/le/{apiVersion}/{orgUnitId}/calendar/events/myEvents/">
+			<http:error-response statusCode="#[vars.httpStatus default 500]" >
+				<http:body ><![CDATA[#[output application/json 
+--- 
+payload default error.description]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
