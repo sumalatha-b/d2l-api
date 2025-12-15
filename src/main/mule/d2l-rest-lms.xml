@@ -144,15 +144,6 @@
         </ee:transform>
         <d2l:get-d2l-api-le-api-version-grades-values-user-id doc:name="Grades - Get user''s grades" doc:id="b3790c68-5ba6-4136-91e0-8f89e8b14c5b" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" userIdUriParam="#[vars.userId]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\calendar\events\myevents\:d2l-rest-lms-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
-                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <d2l:get-d2l-api-le-api-version-org-unit-id-calendar-events-myevents doc:name="Event - Student Activity" doc:id="9ae48ab3-824a-4aa3-a956-76cd9d963579" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" startDateTimeQueryParam="#[attributes.queryParams.startDateTime default &quot;&quot;]" endDateTimeQueryParam="#[attributes.queryParams.endDateTime default &quot;&quot;]" />
-    </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\classlist\:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
             <ee:variables>
@@ -445,7 +436,7 @@
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-values doc:name="Grades - Get users'' final grades" doc:id="5ee92657-578e-4b8b-9c10-d9dbdae3ef3e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]"/>
+		<d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="02fda3ff-135a-4ae1-bf6e-cdb1777bef3e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]"/>
     </flow>
     <flow name="post:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\children\:text\plain:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
