@@ -436,22 +436,6 @@ payload default error.description]]]></http:body>
         </ee:transform>
         <d2l:get-d2l-api-le-api-version-grades-course-completion-user-id doc:name="Grades - Get a user''s course completions" doc:id="d44792ba-9572-47cf-b1a0-babc2e3ad977" config-ref="D2l_Config" userIdUriParam="#[vars.userId]" apiVersionUriParam="#[vars.apiVersion]" correlationIdHeader="#[correlationId]" />
     </flow>
-    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\vaules\:d2l-rest-lms-config">
-        <http:listener doc:name="Listener" doc:id="655ac17b-4854-42a3-ac66-87d6eaa156bc" config-ref="d2l-rest-lms-httpListenerConfig" path="/v1/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/" allowedMethods="GET">
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[output application/json
- --- 
- payload default error.description]]]></http:body>
-            </http:error-response>
-        </http:listener>
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
-                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-vaules doc:name="Grades - Get users'' final grades" doc:id="02fda3ff-135a-4ae1-bf6e-cdb1777bef3e" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
-    </flow>
     <flow name="post:\d2l\api\lp\(apiVersion)\orgstructure\(orgUnitId)\children\:text\plain:d2l-rest-lms-config">
         <ee:transform doc:name="Transform Message">
             <ee:variables>
@@ -479,12 +463,28 @@ payload default error.description]]]></http:body>
         <d2l:post-d2l-api-lp-api-version-orgstructure-org-unit-id-parents doc:name="Orgunit - Add orgunit parent" doc:id="af9c1470-1145-4b21-942d-781fbd4087ea" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" />
     </flow>
     <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\calendar\events\myEvents\:d2l-rest-lms-config">
+        <ee:transform doc:name="Transform Message">
+            <ee:variables>
+                <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
+                <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <d2l:get-d2l-api-le-api-version-org-unit-id-calendar-events-my-events doc:name="Event - Student Activity" doc:id="e555bac8-4635-498e-a2d9-61f121efde19" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" startDateTimeQueryParam="#[attributes.queryParams.startDateTime]" endDateTimeQueryParam="#[attributes.queryParams.endDateTime]" correlationIdHeader="#[correlationId]" />
+    </flow>
+    <flow name="get:\d2l\api\le\(apiVersion)\(orgUnitId)\grades\final\values\:d2l-rest-lms-config">
+        <http:listener doc:name="Listener" doc:id="3b5f6c1c-3e94-4581-a40b-48a8162d2eac" config-ref="d2l-rest-lms-httpListenerConfig" path="/v1/d2l/api/le/{apiVersion}/{orgUnitId}/grades/final/values/" allowedMethods="GET" >
+			<http:error-response statusCode="#[vars.httpStatus default 500]" >
+				<http:body ><![CDATA[#[output application/json
+ --- 
+ payload default error.description]]]></http:body>
+			</http:error-response>
+		</http:listener>
 		<ee:transform doc:name="Transform Message">
             <ee:variables>
                 <ee:set-variable variableName="apiVersion">attributes.uriParams.'apiVersion'</ee:set-variable>
                 <ee:set-variable variableName="orgUnitId">attributes.uriParams.'orgUnitId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<d2l:get-d2l-api-le-api-version-org-unit-id-calendar-events-my-events doc:name="Event - Student Activity" doc:id="e555bac8-4635-498e-a2d9-61f121efde19" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" startDateTimeQueryParam="#[attributes.queryParams.startDateTime]" endDateTimeQueryParam="#[attributes.queryParams.endDateTime]" correlationIdHeader="#[correlationId]"/>
+		<d2l:get-d2l-api-le-api-version-org-unit-id-grades-final-values doc:name="Grades - Get users'' final grades" doc:id="01e156e4-6f7a-4dc8-bf42-745e48f4be48" config-ref="D2l_Config" apiVersionUriParam="#[vars.apiVersion]" orgUnitIdUriParam="#[vars.orgUnitId]" correlationIdHeader="#[correlationId]" isGradedQueryParam="#[isEmpty(attributes.queryParams.isGraded)]"/>
     </flow>
 </mule>
