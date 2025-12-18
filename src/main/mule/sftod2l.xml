@@ -20,7 +20,7 @@ http://www.mulesoft.org/schema/mule/d2l http://www.mulesoft.org/schema/mule/d2l/
 output application/json
 ---
 {
-  "OrgDefinedId": payload.OrgDefinedId__c default "",
+  "OrgDefinedId": payload.Id default "",
   "FirstName": payload.FirstName__c default "",
   "MiddleName": payload.MiddleName__c default "",
   "LastName": payload.LastName__c default "",
@@ -76,7 +76,7 @@ output application/json
     "LastName": payload.LastName__c,
     "UserName": payload.Name,
     "ExternalEmail": payload.ExternalEmail__c default "",
-    "OrgDefinedId": payload.OrgDefinedId__c,
+    "OrgDefinedId": payload.Id,
     "UniqueIdentifier": payload.UniqueIdentifier__c,
     "Activation": {
         "IsActive": payload.IsActive__c default true
