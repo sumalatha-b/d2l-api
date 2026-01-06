@@ -33,6 +33,12 @@ output application/json
 }
 ]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="sfId" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.Id]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="D2L Request Logger" doc:id="feca9484-0e17-46eb-9b3a-80fd255661e7" message="#[payload]"/>
 		<d2l:post-d2l-api-lp-api-version-users doc:name="User - Create User" doc:id="236e7098-787f-4541-a679-672aaa14af6b" config-ref="D2l_Config" apiVersionUriParam="${d2l.version}" correlationIdHeader="#[correlationId]" target="userResponse"/>
@@ -43,6 +49,7 @@ output application/json
 output application/json
 ---
 [{
+	Id: vars.sfId,
 	OrgDefinedId__c: vars.userResponse.OrgDefinedId,
 	Name: vars.userResponse.UserName,
 	UserId__c: vars.userResponse.UserId,
