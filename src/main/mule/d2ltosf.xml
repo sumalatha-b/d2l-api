@@ -22,6 +22,8 @@ output application/json
     MiddleName__c: payload.MiddleName default "",
     LastName__c: payload.LastName,
     Name: payload.UserName,
+    OrgId__c: payload.OrgId,
+    UserId__c: payload.UserId,
     ExternalEmail__c: payload.ExternalEmail default "",
     OrgDefinedId__c: payload.OrgDefinedId,
     UniqueIdentifier__c: payload.UniqueIdentifier,
